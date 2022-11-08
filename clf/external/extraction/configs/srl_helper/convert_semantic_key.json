@@ -1,0 +1,12 @@
+{
+  "action": "V",
+  "arg_1": "ARG1",
+  "arg_2": "ARG2",
+  "arg_3": "ARG3",
+  "arg_4": "ARG4",
+  "argm_mnr": "ARGM-MNR",
+  "argm_dir": "ARGM-DIR",
+  "argm_loc": "ARGM-LOC",
+  "argm_tmp": "ARGM-TMP",
+  "argm_adv": "ARGM-ADV"
+}

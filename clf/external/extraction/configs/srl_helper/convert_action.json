@@ -1,0 +1,130 @@
+[
+  {
+    "target_word": ["left"],
+    "new_word": "to the left",
+    "word_to_skip": [
+      "the left",
+      "a left",
+      "left-turn"
+    ]
+  },
+  {
+    "target_word": ["right"],
+    "new_word": "to the right",
+    "word_to_skip": [
+      "the right",
+      "a right",
+      "right-turn"
+    ]
+  },
+  {
+    "target_word": ["drives", "driving", "driven", "drive"],
+    "new_word": "drove to",
+    "word_to_skip": null
+  },
+  {
+    "target_word": ["heads", "heading", "head"],
+    "new_word": "headed",
+    "word_to_skip": ["ahead", "headed"]
+  },
+  {
+    "target_word": ["runs", "running", "run"],
+    "new_word": "ran",
+    "word_to_skip": null
+  },
+  {
+    "target_word": ["moves", "moving", "move"],
+    "new_word": "moved",
+    "word_to_skip": ["moved"]
+  },
+  {
+    "target_word": ["travels", "traveling", "travel"],
+    "new_word": "traveled",
+    "word_to_skip": ["traveled"]
+  },
+  {
+    "target_word": ["passes", "passing", "pass"],
+    "new_word": "passed",
+    "word_to_skip": ["passed"]
+  },
+  {
+    "target_word": ["speeds down", "speeding down", "speed down"],
+    "new_word": "speeded down",
+    "word_to_skip": null
+  },
+  {
+    "target_word": ["speeds up", "speeding up", "speed up"],
+    "new_word": "speeded up",
+    "word_to_skip": null
+  },
+  {
+    "target_word": ["speeds", "speeding"],
+    "new_word": "speeded",
+    "word_to_skip": ["speeded"]
+  },
+  {
+    "target_word": ["stops", "stopping", "stop"],
+    "new_word": "stopped",
+    "word_to_skip": ["stopped"]
+  },
+  {
+    "target_word": ["waits", "waiting", "wait"],
+    "new_word": "waited",
+    "word_to_skip": ["waited"]
+  },
+  {
+    "target_word": ["parks", "parking", "park"],
+    "new_word": "parked",
+    "word_to_skip": ["parked"]
+  },
+  {
+    "target_word": ["turns", "turning", "turn"],
+    "new_word": "turned",
+    "word_to_skip": ["turned", "u-turn"]
+  },
+  {
+    "target_word": ["veers", "veering", "veer"],
+    "new_word": "veered",
+    "word_to_skip": ["veered"]
+  },
+  {
+    "target_word": ["bares", "baring", "bare"],
+    "new_word": "bared",
+    "word_to_skip": ["bared"]
+  },
+  {
+    "target_word": ["curves", "curving", "curve"],
+    "new_word": "curved",
+    "word_to_skip": ["curved"]
+  },
+  {
+    "target_word": ["crosses", "crossing", "cross"],
+    "new_word": "crossed",
+    "word_to_skip": ["crossed", "crossover"]
+  },
+  {
+    "target_word": ["merges", "merging", "merge"],
+    "new_word": "merged",
+    "word_to_skip": ["merged"]
+  },
+  {
+    "target_word": ["switches", "switching", "switch"],
+    "new_word": "switched",
+    "word_to_skip": ["switched"]
+  },
+  {
+    "target_word": ["changes", "changing", "change"],
+    "new_word": "changed",
+    "word_to_skip": ["changed"]
+  },
+  {
+    "target_word": ["slows", "slowing"],
+    "new_word": "slowed",
+    "word_to_skip": ["slowed"]
+  },
+  {
+    "target_word": ["approaches", "approaching", "approach"],
+    "new_word": "approached",
+    "word_to_skip": ["approached"]
+  }
+]

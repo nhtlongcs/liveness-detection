@@ -1,0 +1,27 @@
+{
+  "turn": [
+    "turn",
+    "curve",
+    "bare"
+    ],
+  "stop": [
+    "stop",
+    "park",
+    "wait",
+    "pause"
+    ],
+  "go": [
+    "run",
+    "go",
+    "drive",
+    "keep",
+    "cross",
+    "move",
+    "continue",
+    "travel",
+    "proceed",
+    "merge",
+    "switch",
+    "change"
+    ]
+}

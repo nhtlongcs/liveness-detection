@@ -1,0 +1,34 @@
+data:
+  text:
+    json_path: null
+    tok_model_name: bert-base-uncased
+    num_texts_used: 3
+    use_other_views: False
+  track:
+    image_dir: null
+    json_path: null
+    motion_path: null
+    meta_json: null
+    crop_area: 1.0
+
+extractors:
+  img_encoder:
+    name: EfficientNetExtractor
+    args:
+      version: 0
+      from_pretrained: True
+      freeze: True
+  lang_encoder:
+    name: LangExtractor
+    args:
+      pretrained: "bert-base-uncased"
+      freeze: True
+model:
+  name: UTS
+  args:
+    NUM_CLASS: 2498 # total tracks
+    # EMBED_DIM: 1024
+    EMBED_DIM: 768
+    car_idloss: True
+    mo_idloss: True
+    share_idloss: True

@@ -1,0 +1,7 @@
+setuptools==59.5.0 # https://stackoverflow.com/questions/70520120/attributeerror-module-setuptools-distutils-has-no-attribute-version
+pytorch_lightning==1.6.0
+transformers==4.11.3
+allennlp==2.9.2
+allennlp-models==2.9.0
+efficientnet_pytorch
+spacy
