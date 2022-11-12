@@ -29,7 +29,7 @@ Raw data is available at
 
 The downloaded data should be extracted to the `data` folder
 
-```bash
+```text
 |-- this-repo
     |-- data
         |-- train
@@ -53,9 +53,11 @@ Preprocessing is done in a single script `preprocess_train_data.sh` which requir
 - Generate `labels_keyframes_*.csv` files which contain the labels for each keyframe
 - Generate `labels_bbox_*.csv` files which contain the labels for each bounding box
 
+> *(IMPORTANT NOTE)* This step is only required if you want to re-preprocess the data. If you want to use the preprocessed data, you can skip this step and download the preprocessed data from [GoogleDrive](https://drive.google.com/drive/u/2/folders/1Fx_UW9Ic-crr7Z57Z-3fv9tZVm8vl2EW) and extract it to the `data/train` folder.
+
 The script will generate the following files:
 
-```bash
+```text
 |-- data
     |-- train
         |-- VideoID.mp4
@@ -90,5 +92,5 @@ The script will generate the following files:
 For sanity check, you can run the following command comparing the extracted frames and faces with the original videos and labels. The script will compare the matched frames and faces with the original videos and labels. If there is any mismatch, the script will print the mismatched frames and faces. It will also print the number of matched videos, frames, and faces in the train and validation sets.
 
 ```bash
-python preprocessing/sanity_check.py
+python preprocessing/sanity_check.py // Not working yet
 ```
