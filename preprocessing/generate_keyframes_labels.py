@@ -1,9 +1,10 @@
 import pandas as pd 
 from pathlib import Path 
-from tqdm import tqdm
-raw_label_path = Path("data/train/labels.csv")
-out_label_path = Path("data/train/labels_keyframes.csv")
-keyframe_dir = Path("data/train/keyframes")
+from tqdm import tqdm 
+import sys
+keyframe_dir = Path(sys.argv[1])
+raw_label_path = Path(sys.argv[2])
+out_label_path = Path(sys.argv[3])
 raw_labels_df = pd.read_csv(raw_label_path)
 raw_labels_df.sort_values(by=["filename"], inplace=True)
 new_filenames = []

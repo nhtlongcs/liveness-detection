@@ -1,0 +1,7 @@
+classes=2
+train=data/mask_dataset_train.txt
+valid=data/mask_dataset_validate.txt
+names=data/mask_dataset.names
+backup=backup/
+eval=coco
+
