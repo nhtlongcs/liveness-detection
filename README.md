@@ -20,6 +20,16 @@ Example Output: Predict.csv
 | ,,,          | ...            |
 | ,,,          | ...            |
 | ,,,          | ...            |
+## Environment
+
+For necessary packages, please refer to environment.yml. You can create a conda environment with the following command:
+
+```bash
+conda env create -f environment.yml 
+```
+
+Alternatively, you can use the docker image provided by us. Please refer to the [Dockerfile](Dockerfile) for more details.
+
 
 ## Data preparation
 
@@ -33,15 +43,17 @@ The downloaded data should be extracted to the `data` folder
 |-- this-repo
     |-- data
         |-- train
-            |-- VideoID.mp4
-            |-- VideoID.mp4
-            |-- ...
             |-- labels.csv
+            |-- videos
+                |-- VideoID.mp4
+                |-- VideoID.mp4
+                |-- ...
 
         |-- public_test
-            |-- VideoID.mp4
-            |-- VideoID.mp4
-            |-- ...
+            |-- videos
+                |-- VideoID.mp4
+                |-- VideoID.mp4
+                |-- ...
 |-- ...
 ```
 
@@ -53,16 +65,13 @@ Preprocessing is done in a single script `preprocess_train_data.sh` which requir
 - Generate `labels_keyframes_*.csv` files which contain the labels for each keyframe
 - Generate `labels_bbox_*.csv` files which contain the labels for each bounding box
 
-> *(IMPORTANT NOTE)* This step is only required if you want to re-preprocess the data. If you want to use the preprocessed data, you can skip this step and download the preprocessed data from [GoogleDrive](https://drive.google.com/drive/u/2/folders/1Fx_UW9Ic-crr7Z57Z-3fv9tZVm8vl2EW) and extract it to the `data/train` folder.
+> *(IMPORTANT NOTE)* This step is only required if you want to re-preprocess the data. If you want to use the preprocessed data, you can skip this step and download the preprocessed data from [GoogleDrive](https://drive.google.com/drive/u/2/folders/1Fx_UW9Ic-crr7Z57Z-3fv9tZVm8vl2EW) then extract it to the `data/train` folder.
 
 The script will generate the following files:
 
 ```text
 |-- data
     |-- train
-        |-- VideoID.mp4
-        |-- VideoID.mp4
-        |-- ...
         |-- labels.csv                          // original labels.csv
         |-- labels_video_train.csv              // labels for each video (train set)
         |-- labels_video_test.csv               // labels for each video (validation set)
@@ -73,6 +82,10 @@ The script will generate the following files:
         |-- labels_bbox_train.csv               // labels for each bounding box (train set)
         |-- labels_bbox_test.csv                // labels for each bounding box (validation set)
         |-- labels_bbox.csv                     // labels for each bounding box (whole dataset)
+        |-- videos
+            |-- VideoID.mp4
+            |-- VideoID.mp4
+            |-- ...
         |-- frames                              // extracted frames directory
             |-- VideoID-FrameID.jpg
             |-- ...
@@ -93,4 +106,39 @@ For sanity check, you can run the following command comparing the extracted fram
 
 ```bash
 python preprocessing/sanity_check.py // Not working yet
+```
+
+
+
+## Contribution guide
+
+If you want to contribute to this repo, please follow steps below:
+
+1. Fork your own version from this repository
+1. Checkout to another branch, e.g. `fix-loss`, `add-feat`.
+1. Make changes/Add features/Fix bugs
+1. Add test cases in the `test` folder and run them to make sure they are all passed (see below)
+1. Create and describe feature/bugfix in the PR description (or create new document)
+1. Push the commit(s) to your own repository
+1. Create a pull request on this repository
+
+```bash
+pip install pytest
+python -m pytest tests/
+```
+
+Expected result:
+
+```bash
+============================== test session starts ===============================
+platform darwin -- Python 3.7.12, pytest-7.1.1, pluggy-1.0.0
+rootdir: /Users/nhtlong/workspace/zaloai2022/
+collected 10 items
+
+tests/test_env.py ...                                                      [ 30%]
+tests/test_utils.py .                                                      [ 40%]
+tests/test_dataset.py .                                                    [ 50%]
+tests/test_eval.py .                                                       [ 60%]
+tests/test_extractor.py ...                                                [ 90%]
+tests/test_model.py .                                                      [100%]
 ```
