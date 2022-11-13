@@ -1,0 +1,60 @@
+global:
+  username: nhtlong
+  name: "vehtype"
+  save_dir: ./runs
+  use_fp16: true
+  debug: false
+  verbose: true
+  SEED: 1337
+  pretrained: null
+  resume: null
+data:
+  name: CropVehDataset
+  args:
+    CITYFLOW_PATH: "data/meta/extracted_frames"
+    SIZE: 288
+    CROP_AREA: 1.0 ## new_= CROP_AREA * old_w
+    train:
+      color_csv: "data/meta/srl/color/col_train.csv"
+      vehtype_csv: "data/meta/srl/veh/train_fraction.csv"
+      json_path: "data/meta/split/train.json"
+      loader:
+        batch_size: 32
+        num_workers: 2
+        shuffle: True
+        drop_last: True
+    val:
+      color_csv: "data/meta/srl/color/col_train.csv"
+      vehtype_csv: "data/meta/srl/veh/train_fraction.csv"
+      json_path: "data/meta/split/val.json"
+      loader:
+        batch_size: 32
+        num_workers: 2
+        shuffle: False
+        drop_last: False
+extractors:
+  img_encoder:
+    name: EfficientNetExtractor
+    args:
+      version: 0
+      from_pretrained: True
+      freeze: True
+model:
+  name: VehTypeClassifer
+  args:
+    NUM_CLASS: 6 # Num of unique vehicle types
+    EMBED_DIM: 768
+
+metric:
+  - name: F1score
+    args:
+      label_key: "vehtype_lbls"
+      num_classes: 6
+
+trainer:
+  lr: 0.001
+  num_epochs: 10000
+  clip_grad: 10.0
+  evaluate_interval: 1
+  print_interval: 20
+  save_interval: 1000
