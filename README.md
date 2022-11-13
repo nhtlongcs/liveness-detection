@@ -1,6 +1,14 @@
 # Liveness detection
 
 ## Table of Contents
+<!-- table of content of this file -->
+- [Table of Contents](#table-of-contents)
+- [Problem statement](#problem-statement)
+- [Environment setup guide](#environment)
+- [Data preparation](#data-preparation)
+- [Model training and evaluation](#training-evaluation-and-inference)
+- [Contribution guide](#contribution-guide)
+
 
 ## Problem statement
 
@@ -113,8 +121,7 @@ python preprocessing/sanity_check.py // Not working yet
 Provided scripts are in `scripts` folder. All scripts have the same interface which requires the following arguments:
 - `-c` or `--config`: path to the config file
 - `-o` or `--opt`: additional options to override the config file (e.g. `--opt extractor.name=efficientnet`)
-For example, checkout the provided config files in `configs` folder and training instructions in `train.ipynb` notebook.
-
+For example, checkout the provided config files in `configs` folder and training instructions in `train.ipynb` notebook. Same for evaluation and inference in `predict.ipynb` notebook.
 
 ## Contribution guide
 
