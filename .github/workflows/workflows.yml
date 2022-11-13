@@ -30,7 +30,8 @@ jobs:
           environment-file: environment.yml
       - name: Preprocess
         run: |
-          sh tools/preprocess_train_data.sh
+          sh tools/preprocess_train_data.sh data/train
+          sh tools/preprocess_public_data.sh data/public
       - name: Test with pytest
         run: |
           python -m pytest tests
