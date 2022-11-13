@@ -9,6 +9,8 @@ def test_collect_env():
     lines = nice_print(details)
     text = os.linesep.join(lines)
     print(text)
-    # assert len(details["CUDA"]["GPU"]) > 0, "No GPU found, please check your CUDA installation"
-    # assert details['CUDA']['version'] == '10.2', "CUDA must be 10.2 to reproduce the results"
+    if len(details["CUDA"]["GPU"]) == 0:
+        print("No GPU found, please check your CUDA installation")
+    else:
+        assert details['CUDA']['version'] == '10.2', "CUDA must be 10.2 to reproduce the results"
     assert details['Lightning']['pytorch-lightning'] == '1.6.0', "pytorch-lightning must be 1.6.0 to reproduce the results"

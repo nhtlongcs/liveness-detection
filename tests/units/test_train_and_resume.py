@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from core.models import MODEL_REGISTRY
-
+import pytest
 from pathlib import Path
 
 
@@ -35,7 +35,7 @@ def train(model_name, cfg_path, resume_ckpt=None):
     del model
     del checkpoint_callback
 
-
+@pytest.mark.order(1)
 def test_trainer(model_name="FrameClassifier"):
     cfg_path = "tests/configs/keyframes.yml"
     assert Path(cfg_path).exists(), "config file not found"

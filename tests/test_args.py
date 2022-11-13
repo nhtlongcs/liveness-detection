@@ -4,7 +4,6 @@ from core.opt import Opts
 import pytest
 import yaml
 
-@pytest.mark.order(1)
 @pytest.fixture
 def minimal_cfg(tmp_path):
     cfg = {"global": {"name": "test", "verbose": False, "SEED": 21318}}
@@ -17,6 +16,7 @@ def _save_cfg(tmp_path, cfg):
 
 
 @pytest.mark.parametrize("exp_name", [None, "delete", "another_name"])
+@pytest.mark.order(1)
 def test_opts_device_cpu(tmp_path, minimal_cfg, exp_name):
     def _fake_test():
         opts = Opts(cfg=cfg_path).parse_args(["-o", "global.name=another_name"])
