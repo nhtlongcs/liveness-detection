@@ -7,6 +7,7 @@
 - [Environment setup guide](#environment)
 - [Data preparation](#data-preparation)
 - [Model training and evaluation](#training-evaluation-and-inference)
+- [Build docker image](#build-docker-image)
 - [Contribution guide](#contribution-guide)
 
 
@@ -34,16 +35,27 @@ For necessary packages, please refer to environment.yml. You can create a conda 
 
 ```bash
 conda env create -f environment.yml 
+conda activate zaloai
 ```
 
 Alternatively, you can use the docker image provided by us. Please refer to the [Dockerfile](Dockerfile) for more details.
 
 
 ## Data preparation
+Train dataset: 1168 videos of faces with facemask, in which 598 are real and 570 are fake.
+
+Public test: 350 videos of faces with facemask, without label file.
+
+Public test 2: 486 videos of faces with facemask, without label file.
+
+Private test: 839 videos of faces with facemask, without label file.
+
 
 Raw data is available at 
 - Train dataset: [https://dl-challenge.zalo.ai/liveness-detection/train.zip](https://dl-challenge.zalo.ai/liveness-detection/train.zip)
 - Public test: [https://dl-challenge.zalo.ai/liveness-detection/public_test.zip](https://dl-challenge.zalo.ai/liveness-detection/public_test.zip)
+
+- **Public test 2**: [https://dl-challenge.zalo.ai/liveness-detection/public_test_2.zip](https://dl-challenge.zalo.ai/liveness-detection/public_test_2.zip)
 
 The downloaded data should be extracted to the `data` folder
 
@@ -122,6 +134,34 @@ Provided scripts are in `scripts` folder. All scripts have the same interface wh
 - `-c` or `--config`: path to the config file
 - `-o` or `--opt`: additional options to override the config file (e.g. `--opt extractor.name=efficientnet`)
 For example, checkout the provided config files in `configs` folder and training instructions in `train.ipynb` notebook. Same for evaluation and inference in `predict.ipynb` notebook.
+
+## Build docker image 
+For deployment/training purpose, docker is an ready-to-use solution.
+
+To build docker image:
+```bash
+$ cd <this-repo>
+$ DOCKER_BUILDKIT=1 docker build -t liveness:latest .
+```
+To start docker container:
+```bash
+# With device is the GPU device number, and shm-size is the shared memory size 
+# should be larger than the size of the model
+$ docker run --rm --name liveness --gpus device=0 --shm-size 16G -it -v $(pwd)/:/home/workspace/src/ liveness:latest /bin/bash
+```
+Other useful docker commands:
+```bash
+# Attach to the running container
+$ docker attach <container_name> 
+# list all containers
+$ docker ps -a
+# list all images
+$ docker images 
+# stop a container
+$ docker stop <container_id>
+# remove a container
+$ docker rm <container_id>
+```
 
 ## Contribution guide
 
