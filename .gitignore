@@ -16,3 +16,4 @@ tmp/
 *.eggs
 *.json
 .pytest_cache
+data
