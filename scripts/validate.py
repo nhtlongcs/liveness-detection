@@ -22,8 +22,9 @@ def check(cfg, pretrained_ckpt=None):
     del model
 
 
-cfg = Opts().parse_args()
-check(
-    cfg,
-    pretrained_ckpt=cfg['global']['pretrained']
-)
+if __name__ == "__main__":
+    cfg = Opts().parse_args()
+    check(
+        cfg,
+        pretrained_ckpt=cfg['global']['pretrained']
+    )

@@ -91,7 +91,8 @@ class ClsPredictor:
         return result
 
 
-def predict():
+    
+if __name__ == "__main__":
     cfg = Opts().parse_args()
     resume_ckpt = cfg['global']['pretrained']
     save_path = Path(cfg['global']['save_path'])
@@ -109,20 +110,3 @@ def predict():
     p = ClsPredictor(model, cfg, batch_size=batch_sz)
     df = p.predict_csv()
     df.to_csv(save_path, index=False)
-    
-if __name__ == "__main__":
-    
-
-    # python predict.py   -c $CFG_PATH \
-    #                     -o  global.pretrained=$CKPT_PATH \
-    #                         global.save_path=$SAVEPATH \
-    #                         global.batch_size=$BATCH_SIZE \
-    #                         data.CSV_PATH=$JSON_PATH \
-    #                         data.IMAGE_DIR=$IMAGE_DIR
-    # CUDA_VISIBLE_DEVICE=0 python predict.py   -c  configs/validation/frameb5.yml \
-    #                     -o  global.pretrained="runs/zaloai-face-clf/2c7y5y82/Accuracy0.9841.ckpt" \
-    #                         global.save_path="runs/zaloai-face-clf/2c7y5y82/predict/val.csv" \
-    #                         global.batch_size=32 
-                            # data.CSV_PATH=$JSON_PATH \
-                            # data.IMAGE_DIR=$IMAGE_DIR
-    predict()
