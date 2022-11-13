@@ -1,0 +1,20 @@
+global:
+  pretrained: null
+  save_path: null
+  batch_size: 32
+data:
+  SIZE: 380
+  CSV_PATH: data/train/labels_bbox_test.csv
+  IMG_DIR: data/train/faces/crop/
+extractors:
+  img_encoder:
+    name: EfficientNetExtractor
+    args:
+      version: 5
+      from_pretrained: False
+      freeze: True
+model:
+  name: FrameClassifier
+  args:
+    NUM_CLASS: 2 
+    EMBED_DIM: 1024

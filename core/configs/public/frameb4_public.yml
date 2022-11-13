@@ -1,0 +1,20 @@
+global:
+  pretrained: null
+  save_path: null
+  batch_size: 32
+data:
+  SIZE: 380
+  CSV_PATH: data/public/labels_keyframes.csv
+  IMG_DIR: data/public/keyframes/
+extractors:
+  img_encoder:
+    name: EfficientNetExtractor
+    args:
+      version: 4
+      from_pretrained: False
+      freeze: True
+model:
+  name: FrameClassifier
+  args:
+    NUM_CLASS: 2 
+    EMBED_DIM: 1024
