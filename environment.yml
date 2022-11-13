@@ -45,7 +45,8 @@ dependencies:
   - nltk
   - webcolors
   - python-levenshtein
-
+  - notebook
+  - scikit-learn
   - pip
   # CI/CD
   - pytest
