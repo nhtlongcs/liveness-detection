@@ -15,5 +15,6 @@ tmp/
 *.egg-info
 *.eggs
 *.json
+results/
 .pytest_cache
 data
