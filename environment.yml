@@ -27,7 +27,7 @@ dependencies:
   - pytorch=1.10
   - pytorch-lightning=1.6.0
   - torchvision
-  - transformers
+  # - transformers
   # - faiss
 
   - requests
@@ -46,12 +46,15 @@ dependencies:
   - webcolors
   - python-levenshtein
 
-  # Examples
   - pip
   # CI/CD
   - pytest
   - pytest-order
+  # Unknow ???
+  - sniffio
   - pip:
     # works for regular pip packages
     - efficientnet_pytorch
     - timm
+    # install local package
+    - -e .
