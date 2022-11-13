@@ -108,6 +108,12 @@ For sanity check, you can run the following command comparing the extracted fram
 python preprocessing/sanity_check.py // Not working yet
 ```
 
+## Training, evaluation, and inference
+
+Provided scripts are in `scripts` folder. All scripts have the same interface which requires the following arguments:
+- `-c` or `--config`: path to the config file
+- `-o` or `--opt`: additional options to override the config file (e.g. `--opt extractor.name=efficientnet`)
+For example, checkout the provided config files in `configs` folder and training instructions in `train.ipynb` notebook.
 
 
 ## Contribution guide
