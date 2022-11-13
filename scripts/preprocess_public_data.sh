@@ -11,7 +11,7 @@ mkdir -p $FACE_DIR
 # Extract frames from videos
 python preprocessing/generate_raw_labels_from_folder.py $VIDEO_DIR $DATA_PUBLIC_DIR/labels_video.csv
 sh preprocessing/extract_keyframes.sh $VIDEO_DIR $KEYFRAME_DIR
-python preprocessing/generate_keyframes_labels.py $KEYFRAME_DIR $DATA_PUBLIC_DIR/labels_video.csv $DATA_PUBLIC_DIR/labels_keyframe.csv
+python preprocessing/generate_keyframes_labels.py $KEYFRAME_DIR $DATA_PUBLIC_DIR/labels_video.csv $DATA_PUBLIC_DIR/labels_keyframes.csv
 PYTHONPATH=preprocessing/yolov3/ python preprocessing/yolov3/image_detect.py --input $KEYFRAME_DIR --output $FACE_DIR \
 --model_def preprocessing/weight/yolov3_mask.cfg \
 --weights_path preprocessing/weight/yolov3_ckpt_35.pth \
