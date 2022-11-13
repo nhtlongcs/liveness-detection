@@ -1,4 +1,4 @@
-
+lightning_logs
 .vscode
 __pycache__
 .DS_Store
@@ -15,3 +15,4 @@ tmp/
 *.egg-info
 *.eggs
 *.json
+.pytest_cache
