@@ -5,7 +5,7 @@ from typing import Optional
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import yaml
 import json
-from src.utils.loading import load_yaml
+from core.utils.loading import load_yaml
 
 
 class Config(dict):
