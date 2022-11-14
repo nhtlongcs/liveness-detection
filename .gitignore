@@ -17,5 +17,6 @@ tmp/
 *.json
 results/
 runs/
+data_sample/
 .pytest_cache
 data
