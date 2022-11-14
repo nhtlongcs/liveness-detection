@@ -11,7 +11,7 @@ class Accuracy:
     Acc Score
     """
 
-    def __init__(self,label_key="labels", **kwargs):
+    def __init__(self, label_key="labels", **kwargs):
         super().__init__(**kwargs)
         self.label_key = label_key
         self.threshold = kwargs.get("threshold", 0.5)
@@ -36,4 +36,3 @@ class Accuracy:
     def value(self):
         score = np.mean(np.array(self.targets) == np.array(self.preds))
         return {f"Accuracy": score}
-

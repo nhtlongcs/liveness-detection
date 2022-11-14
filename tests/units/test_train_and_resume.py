@@ -14,13 +14,17 @@ from pathlib import Path
 def train(model_name, cfg_path, resume_ckpt=None):
     cfg = Opts(cfg=cfg_path).parse_args([])
     model = MODEL_REGISTRY.get(model_name)(cfg)
-    checkpoint_callback = ModelCheckpoint(verbose=True, save_last=True,)
+    checkpoint_callback = ModelCheckpoint(
+        verbose=True,
+        save_last=True,
+    )
     trainer = pl.Trainer(
         default_root_dir="./tmp",
         log_every_n_steps=1,
         max_steps=10,
         max_epochs=2,
-        gpus=-1 if torch.cuda.device_count() else None,  # Use all gpus available
+        gpus=-1
+        if torch.cuda.device_count() else None,  # Use all gpus available
         check_val_every_n_epoch=cfg.trainer["evaluate_interval"],
         strategy="ddp" if torch.cuda.device_count() > 1 else None,
         sync_batchnorm=True if torch.cuda.device_count() > 1 else False,
@@ -35,6 +39,7 @@ def train(model_name, cfg_path, resume_ckpt=None):
     del model
     del checkpoint_callback
 
+
 @pytest.mark.order(1)
 def test_trainer(model_name="FrameClassifier"):
     cfg_path = "tests/configs/keyframes.yml"
@@ -46,4 +51,3 @@ def test_trainer(model_name="FrameClassifier"):
         cfg_path,
         resume_ckpt="./tmp/lightning_logs/version_0/checkpoints/last.ckpt",
     )
-

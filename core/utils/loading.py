@@ -15,8 +15,7 @@ def load_state_dict(instance, state_dict, key=None):
     """
 
     if isinstance(instance, torch.nn.Module) or isinstance(
-        instance, torch.optim.Optimizer
-    ):
+            instance, torch.optim.Optimizer):
         try:
             if key is not None:
                 instance.load_state_dict(state_dict[key])

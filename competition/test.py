@@ -13,10 +13,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     gt_df = pd.read_csv(args.gt)
     pred_df = pd.read_csv(args.pred)
-    
+
     # get intersection of filenames
-    filenames = list(set(gt_df["filename"]).intersection(set(pred_df["fname"])))
-    error_filenames = set(gt_df["filename"]) - set(filenames) 
+    filenames = list(
+        set(gt_df["filename"]).intersection(set(pred_df["fname"])))
+    error_filenames = set(gt_df["filename"]) - set(filenames)
     for filename in error_filenames:
         print("Error: {} not found in prediction file".format(filename))
 
@@ -33,9 +34,11 @@ if __name__ == "__main__":
     prediction = pred_df["liveness_score"].values.tolist()
     # print(gt_df["label"].values)
     # print(pred_df["label"].values)
-    assert len(label) == len(prediction), "Error: length of label and prediction are not equal"
+    assert len(label) == len(
+        prediction), "Error: length of label and prediction are not equal"
     # print number of ground truth labels and predictions as table
-    table = [["number of gt sample", "number of predictions"], [len(label), len(prediction)]]
+    table = [["number of gt sample", "number of predictions"],
+             [len(label), len(prediction)]]
     print(tabulate.tabulate(table, headers="firstrow", tablefmt="fancy_grid"))
     eer = compute_eer(label, prediction)
     acc = compute_acc(label, prediction, threshold=0.5)

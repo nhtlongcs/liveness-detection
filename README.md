@@ -195,3 +195,11 @@ tests/test_eval.py .                                                       [ 60%
 tests/test_extractor.py ...                                                [ 90%]
 tests/test_model.py .                                                      [100%]
 ```
+
+To run code-format
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run -a
+```

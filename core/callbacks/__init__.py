@@ -1,4 +1,5 @@
 from core.registry import Registry
+
 CALLBACKS_REGISTRY = Registry("CALLBACKS")
 
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor, EarlyStopping

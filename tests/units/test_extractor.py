@@ -3,10 +3,13 @@ from core.extractors import EXTRCT_REGISTRY
 from core.opt import Opts
 from pathlib import Path
 import torch
-import pytest 
+import pytest
+
 
 @pytest.mark.order(1)
-@pytest.mark.parametrize('extractor_name,version,img_size', [("VitNetExtractor",'vit_base_patch16_384',384), ("EfficientNetExtractor",0,380)])
+@pytest.mark.parametrize('extractor_name,version,img_size',
+                         [("VitNetExtractor", 'vit_base_patch16_384', 384),
+                          ("EfficientNetExtractor", 0, 380)])
 def test_extractor_model(extractor_name, version, img_size):
     cfg = {
         "version": version,

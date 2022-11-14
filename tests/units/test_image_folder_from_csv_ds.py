@@ -2,24 +2,21 @@ from core.dataset import DATASET_REGISTRY
 import torchvision
 from torch.utils.data import DataLoader
 from pathlib import Path
-import pytest 
+import pytest
+
 
 @pytest.mark.order(1)
 def test_vision_dataset(dataset_name="ImageFolderFromCSV"):
-    image_transform = torchvision.transforms.Compose(
-        [
-            torchvision.transforms.Resize((288, 288)),
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize(
-                mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-            ),
-        ]
-    )
+    image_transform = torchvision.transforms.Compose([
+        torchvision.transforms.Resize((288, 288)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225]),
+    ])
     ds = DATASET_REGISTRY.get(dataset_name)(
         CSV_PATH="data/train/labels_keyframes_test.csv",
         IMG_DIR="data/train/keyframes",
-        transform=image_transform
-    )
+        transform=image_transform)
     dataloader = DataLoader(
         ds,
         collate_fn=ds.collate_fn,
@@ -32,5 +29,3 @@ def test_vision_dataset(dataset_name="ImageFolderFromCSV"):
         print(batch["labels"].shape)
         if i >= 5:
             break
-
-

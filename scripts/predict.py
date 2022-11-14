@@ -6,7 +6,6 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from tqdm.auto import tqdm
 
-
 from core.dataset.default import ImageFolderFromCSV
 from core.models.abstract import ClsBase
 from core.dataset import DATASET_REGISTRY
@@ -18,19 +17,23 @@ from core.opt import Opts
 import pandas as pd
 from pathlib import Path
 
+
 class WrapperDataModule(pl.LightningDataModule):
+
     def __init__(self, ds, batch_size):
         super().__init__()
         self.ds = ds
         self.batch_size = batch_size
 
     def predict_dataloader(self):
-        return DataLoader(
-            self.ds, batch_size=self.batch_size, collate_fn=self.ds.collate_fn, num_workers=20
-        )
+        return DataLoader(self.ds,
+                          batch_size=self.batch_size,
+                          collate_fn=self.ds.collate_fn,
+                          num_workers=20)
 
 
 class ClsPredictor:
+
     def __init__(
         self,
         model: ClsBase,
@@ -43,23 +46,22 @@ class ClsPredictor:
         self.batch_size = batch_size
         self.setup()
 
-
     def setup(self):
         image_size = self.cfg['data']['SIZE']
-        transform = torchvision.transforms.Compose(
-            [
-                torchvision.transforms.Resize((image_size, image_size)),
-                torchvision.transforms.ToTensor(),
-                torchvision.transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                ),
-            ]
-        )
-        self.ds = ImageFolderFromCSV(**self.cfg.data, transform=transform, num_rows=-1)
+        transform = torchvision.transforms.Compose([
+            torchvision.transforms.Resize((image_size, image_size)),
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                             std=[0.229, 0.224, 0.225]),
+        ])
+        self.ds = ImageFolderFromCSV(**self.cfg.data,
+                                     transform=transform,
+                                     num_rows=-1)
 
     def predict(self):
         trainer = pl.Trainer(
-            gpus=-1 if torch.cuda.device_count() else None,  # Use all gpus available
+            gpus=-1
+            if torch.cuda.device_count() else None,  # Use all gpus available
             strategy="ddp" if torch.cuda.device_count() > 1 else None,
             sync_batchnorm=True if torch.cuda.device_count() > 1 else False,
             enable_checkpointing=False,
@@ -68,15 +70,16 @@ class ClsPredictor:
         dm = WrapperDataModule(self.ds, batch_size=self.batch_size)
         prds = trainer.predict(self.model, dm)
         return prds
+
     def predict_csv(self):
         prds = self.predict()
         video_ids = []
         frame_ids = []
         labels = []
         probs = []
-        
+
         for _, batch_prds in enumerate(prds):
-            video_bids = batch_prds['video_ids'] # batch ids
+            video_bids = batch_prds['video_ids']  # batch ids
             frame_bids = batch_prds['frame_ids']
             # convert logits to probabilities using softmax
             probs_b = torch.softmax(batch_prds['logits'], dim=1).cpu().numpy()
@@ -87,16 +90,20 @@ class ClsPredictor:
             frame_ids.extend(frame_bids)
             labels.extend(labels_b)
             probs.extend(probs_b)
-        result = pd.DataFrame({'video_id': video_ids, 'frame_id': frame_ids, 'label': labels, 'prob': probs})
+        result = pd.DataFrame({
+            'video_id': video_ids,
+            'frame_id': frame_ids,
+            'label': labels,
+            'prob': probs
+        })
         return result
 
 
-    
 if __name__ == "__main__":
     cfg = Opts().parse_args()
     resume_ckpt = cfg['global']['pretrained']
     save_path = Path(cfg['global']['save_path'])
-    batch_sz = cfg['global']['batch_size'] 
+    batch_sz = cfg['global']['batch_size']
     # if save_path is directory, then savepath = savepath / 'predict.csv'
     if save_path.is_dir():
         save_path.mkdir(parents=True, exist_ok=True)

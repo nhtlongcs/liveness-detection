@@ -8,10 +8,13 @@ from core.utils.losses import FocalLoss
 
 
 class ClassifyBlock(nn.Module):
+
     def __init__(self, inp_dim, num_cls, embed_dim=1024) -> None:
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(inp_dim, embed_dim), nn.BatchNorm1d(embed_dim), nn.ReLU(),
+            nn.Linear(inp_dim, embed_dim),
+            nn.BatchNorm1d(embed_dim),
+            nn.ReLU(),
         )
         self.projection = nn.Linear(embed_dim, num_cls)
 
@@ -24,29 +27,33 @@ class ClassifyBlock(nn.Module):
 
 @MODEL_REGISTRY.register()
 class Classifier(ClsBase):
+
     def __init__(self, config):
         super().__init__(config)
 
     def init_model(self):
         embed_dim = self.cfg.model["args"]["EMBED_DIM"]
 
-        assert self.cfg.extractors.get("img_encoder", None) is not None, "img_encoder must be specified"
+        assert self.cfg.extractors.get(
+            "img_encoder", None) is not None, "img_encoder must be specified"
         self.visualExtrct = EXTRCT_REGISTRY.get(
-            self.cfg.extractors["img_encoder"]["name"]
-        )(**self.cfg.extractors["img_encoder"]["args"])
+            self.cfg.extractors["img_encoder"]["name"])(
+                **self.cfg.extractors["img_encoder"]["args"])
 
         self.img_in_dim = self.visualExtrct.feature_dim
-        assert self.cfg.model["args"].get("NUM_CLASS", None) is not None, "NUM_CLASS must be specified"
+        assert self.cfg.model["args"].get(
+            "NUM_CLASS", None) is not None, "NUM_CLASS must be specified"
         self.logits = ClassifyBlock(
             inp_dim=self.img_in_dim,
             num_cls=self.cfg.model["args"]["NUM_CLASS"],
             embed_dim=embed_dim,
         )
-        
+
         self.loss = FocalLoss(num_classes=self.cfg.model["args"]["NUM_CLASS"])
-    
+
     def normalize_head(
-        self, embedding,
+        self,
+        embedding,
     ):
         return F.normalize(embedding, p=2, dim=-1)
 
@@ -64,17 +71,19 @@ class Classifier(ClsBase):
         assert "images" in batch.keys(), "Batch must contain images"
         preds = self.forward(batch)
         # add meta data for inference stage
-        preds.update({'filenames': batch['filenames'],
-        'video_ids': batch['video_ids'],
-        'frame_ids': batch['frame_ids']
+        preds.update({
+            'filenames': batch['filenames'],
+            'video_ids': batch['video_ids'],
+            'frame_ids': batch['frame_ids']
         })
         return preds
 
+
 @MODEL_REGISTRY.register()
 class FrameClassifier(Classifier):
+
     def __init__(self, config):
         super().__init__(config)
 
     def compute_loss(self, logits, batch, **kwargs):
         return self.loss(logits, batch["labels"].long())
-

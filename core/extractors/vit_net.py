@@ -2,8 +2,10 @@ import timm
 from .extrct_net import ExtractorNetwork
 from . import EXTRCT_REGISTRY
 
+
 @EXTRCT_REGISTRY.register()
 class VitNetExtractor(ExtractorNetwork):
+
     def __init__(self, version, from_pretrained=True, freeze=False):
         super().__init__()
         available_versions = [
@@ -26,7 +28,8 @@ class VitNetExtractor(ExtractorNetwork):
         print(version)
         assert version in available_versions, f"version must be one of available_versions"
         if from_pretrained:
-            self.extractor =timm.create_model(version, pretrained=from_pretrained)
+            self.extractor = timm.create_model(version,
+                                               pretrained=from_pretrained)
         self.feature_dim = self.extractor.num_features  # num_features for consistency with other models
         if freeze:
             self.freeze()
@@ -34,5 +37,6 @@ class VitNetExtractor(ExtractorNetwork):
     def forward(self, x):
         x = self.extractor.forward_features(x)
         # https://github.com/rwightman/pytorch-image-models/blob/8ff45e41f7a6aba4d5fdadee7dc3b7f2733df045/timm/models/vision_transformer.py#L542
-        x = x[:, self.extractor.num_prefix_tokens:].mean(dim=1) if self.extractor.global_pool == 'avg' else x[:, 0]
+        x = x[:, self.extractor.num_prefix_tokens:].mean(
+            dim=1) if self.extractor.global_pool == 'avg' else x[:, 0]
         return x

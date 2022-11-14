@@ -25,7 +25,6 @@ import torch
 
 sys.path += [os.path.abspath(".."), os.path.abspath("")]
 
-
 LEVEL_OFFSET = "\t"
 KEY_PADDING = 20
 
@@ -42,9 +41,14 @@ def info_system() -> dict:
 
 def info_cuda() -> dict:
     return {
-        "GPU": [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())] or None,
-        "available": torch.cuda.is_available(),
-        "version": torch.version.cuda,
+        "GPU": [
+            torch.cuda.get_device_name(i)
+            for i in range(torch.cuda.device_count())
+        ] or None,
+        "available":
+        torch.cuda.is_available(),
+        "version":
+        torch.version.cuda,
     }
 
 
@@ -66,7 +70,8 @@ def nice_print(details: dict, level: int = 0) -> list:
             lines += nice_print(details[k], level + 1)
         elif isinstance(details[k], (set, list, tuple)):
             lines += [level * LEVEL_OFFSET + key]
-            lines += [(level + 1) * LEVEL_OFFSET + "- " + v for v in details[k]]
+            lines += [(level + 1) * LEVEL_OFFSET + "- " + v
+                      for v in details[k]]
         else:
             template = "{:%is} {}" % KEY_PADDING
             key_val = template.format(key, details[k])
@@ -75,8 +80,16 @@ def nice_print(details: dict, level: int = 0) -> list:
 
 
 def main() -> None:
-    details = {"System": info_system(), "CUDA": info_cuda(), "Packages": info_packages()}
-    details["Lightning"] = {k: v for k, v in details["Packages"].items() if "torch" in k or "lightning" in k}
+    details = {
+        "System": info_system(),
+        "CUDA": info_cuda(),
+        "Packages": info_packages()
+    }
+    details["Lightning"] = {
+        k: v
+        for k, v in details["Packages"].items()
+        if "torch" in k or "lightning" in k
+    }
     lines = nice_print(details)
     text = os.linesep.join(lines)
     print(text)

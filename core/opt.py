@@ -37,14 +37,17 @@ class Config(dict):
 
 
 class Opts(ArgumentParser):
+
     def __init__(self, cfg: Optional[str] = None):
         super(Opts, self).__init__(formatter_class=RawDescriptionHelpFormatter)
-        self.add_argument(
-            "-c", "--config", default=cfg, help="configuration file to use"
-        )
-        self.add_argument(
-            "-o", "--opt", nargs="+", help="override configuration options"
-        )
+        self.add_argument("-c",
+                          "--config",
+                          default=cfg,
+                          help="configuration file to use")
+        self.add_argument("-o",
+                          "--opt",
+                          nargs="+",
+                          help="override configuration options")
 
     def parse_args(self, argv=None):
         args = super(Opts, self).parse_args(argv)
@@ -86,8 +89,7 @@ class Opts(ArgumentParser):
                 assert (
                     sub_keys[0] in global_config
                 ), "the sub_keys can only be one of global_config: {}, but get: {}, please check your running command".format(
-                    global_config.keys(), sub_keys[0]
-                )
+                    global_config.keys(), sub_keys[0])
                 cur = global_config[sub_keys[0]]
                 for idx, sub_key in enumerate(sub_keys[1:]):
                     if idx == len(sub_keys) - 2:

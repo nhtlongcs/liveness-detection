@@ -2,7 +2,8 @@
 from core.models import MODEL_REGISTRY
 from core.opt import Opts
 from pathlib import Path
-import pytest 
+import pytest
+
 
 @pytest.mark.order(1)
 def test_model(model_name="FrameClassifier"):

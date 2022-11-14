@@ -1,12 +1,16 @@
-import pandas as pd 
+import pandas as pd
+
+
 def keyframe_df2video_df(keyframe_df):
     keyframe_df = keyframe_df[['video_id', 'label']]
     # only keep 1 row per video
     keyframe_df = keyframe_df.drop_duplicates(subset='video_id', keep='first')
     keyframe_df.sort_values(by='video_id', inplace=True)
-    keyframe_df['filename'] = keyframe_df.video_id.apply(lambda x: str(x) + '.mp4')
+    keyframe_df['filename'] = keyframe_df.video_id.apply(
+        lambda x: str(x) + '.mp4')
     keyframe_df = keyframe_df[['filename', 'label']]
     return keyframe_df
+
 
 trainKeyframe_df = pd.read_csv('data/train/labels_keyframes_train.csv')
 testKeyframe_df = pd.read_csv('data/train/labels_keyframes_test.csv')

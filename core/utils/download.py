@@ -2,6 +2,7 @@ import os
 import os.path as osp
 import urllib.request as urlreq
 
+
 def download_url(url, root, filename=None):
     """Download a file from a url and place it in root.
     Args:
@@ -27,7 +28,7 @@ def download_url(url, root, filename=None):
         if url[:5] == 'https':
             url = url.replace('https:', 'http:')
             print('Failed download. Trying https -> http instead.'
-                    ' Downloading ' + url + ' to ' + fpath)
+                  ' Downloading ' + url + ' to ' + fpath)
             urlreq.urlretrieve(url, fpath)
 
     return fpath

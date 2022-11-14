@@ -1,7 +1,8 @@
-import pandas as pd 
-from pathlib import Path 
-from tqdm import tqdm 
+import pandas as pd
+from pathlib import Path
+from tqdm import tqdm
 import sys
+
 keyframe_dir = Path(sys.argv[1])
 raw_label_path = Path(sys.argv[2])
 out_label_path = Path(sys.argv[3])

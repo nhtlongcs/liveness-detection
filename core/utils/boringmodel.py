@@ -20,6 +20,7 @@ from pytorch_lightning import LightningDataModule, LightningModule
 
 
 class RandomDictDataset(Dataset):
+
     def __init__(self, size: int, length: int):
         self.len = length
         self.data = torch.randn(length, size)
@@ -34,6 +35,7 @@ class RandomDictDataset(Dataset):
 
 
 class RandomDataset(Dataset):
+
     def __init__(self, size: int, length: int):
         self.len = length
         self.data = torch.randn(length, size)
@@ -46,6 +48,7 @@ class RandomDataset(Dataset):
 
 
 class RandomIterableDataset(IterableDataset):
+
     def __init__(self, size: int, count: int):
         self.count = count
         self.size = size
@@ -56,6 +59,7 @@ class RandomIterableDataset(IterableDataset):
 
 
 class RandomIterableDatasetWithLen(IterableDataset):
+
     def __init__(self, size: int, count: int):
         self.count = count
         self.size = size
@@ -69,6 +73,7 @@ class RandomIterableDatasetWithLen(IterableDataset):
 
 
 class BoringModel(LightningModule):
+
     def __init__(self):
         """Testing PL Module.
 
@@ -146,6 +151,7 @@ class BoringModel(LightningModule):
 
 
 class BoringDataModule(LightningDataModule):
+
     def __init__(self, data_dir: str = "./"):
         super().__init__()
         self.data_dir = data_dir
@@ -158,13 +164,16 @@ class BoringDataModule(LightningDataModule):
             self.random_train = Subset(self.random_full, indices=range(64))
 
         if stage in ("fit", "validate") or stage is None:
-            self.random_val = Subset(self.random_full, indices=range(64, 64 * 2))
+            self.random_val = Subset(self.random_full,
+                                     indices=range(64, 64 * 2))
 
         if stage == "test" or stage is None:
-            self.random_test = Subset(self.random_full, indices=range(64 * 2, 64 * 3))
+            self.random_test = Subset(self.random_full,
+                                      indices=range(64 * 2, 64 * 3))
 
         if stage == "predict" or stage is None:
-            self.random_predict = Subset(self.random_full, indices=range(64 * 3, 64 * 4))
+            self.random_predict = Subset(self.random_full,
+                                         indices=range(64 * 3, 64 * 4))
 
     def train_dataloader(self):
         return DataLoader(self.random_train)
@@ -180,6 +189,7 @@ class BoringDataModule(LightningDataModule):
 
 
 class ManualOptimBoringModel(BoringModel):
+
     def __init__(self):
         super().__init__()
         self.automatic_optimization = False

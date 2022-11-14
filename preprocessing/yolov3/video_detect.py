@@ -1,7 +1,7 @@
 from __future__ import division
 
 from models import Darknet
-from utils.utils import load_classes,non_max_suppression_output
+from utils.utils import load_classes, non_max_suppression_output
 
 import argparse
 
@@ -14,15 +14,42 @@ from torch.autograd import Variable
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file_path", type=str, default="testing/input/videos/Clip032.mp4", help="path to video file")
-    parser.add_argument("--model_def", type=str, default="config/yolov3_mask.cfg", help="path to model definition file")
-    parser.add_argument("--weights_path", type=str, default="checkpoints/yolov3_ckpt_35.pth", help="path to weights file")
-    parser.add_argument("--class_path", type=str, default="data/mask_dataset.names", help="path to class label file")
-    parser.add_argument("--conf_thres", type=float, default=0.9, help="object confidence threshold")
-    parser.add_argument("--nms_thres", type=float, default=0.4, help="iou thresshold for non-maximum suppression")
-    parser.add_argument("--frame_size", type=int, default=416, help="size of each image dimension")
-    parser.add_argument("--save_video", type=bool, default=True, help="save output video or not")
-    parser.add_argument("--output_path", type=str, default="testing/output/videos", help="output video path")
+    parser.add_argument("--input_file_path",
+                        type=str,
+                        default="testing/input/videos/Clip032.mp4",
+                        help="path to video file")
+    parser.add_argument("--model_def",
+                        type=str,
+                        default="config/yolov3_mask.cfg",
+                        help="path to model definition file")
+    parser.add_argument("--weights_path",
+                        type=str,
+                        default="checkpoints/yolov3_ckpt_35.pth",
+                        help="path to weights file")
+    parser.add_argument("--class_path",
+                        type=str,
+                        default="data/mask_dataset.names",
+                        help="path to class label file")
+    parser.add_argument("--conf_thres",
+                        type=float,
+                        default=0.9,
+                        help="object confidence threshold")
+    parser.add_argument("--nms_thres",
+                        type=float,
+                        default=0.4,
+                        help="iou thresshold for non-maximum suppression")
+    parser.add_argument("--frame_size",
+                        type=int,
+                        default=416,
+                        help="size of each image dimension")
+    parser.add_argument("--save_video",
+                        type=bool,
+                        default=True,
+                        help="save output video or not")
+    parser.add_argument("--output_path",
+                        type=str,
+                        default="testing/output/videos",
+                        help="output video path")
 
     opt = parser.parse_args()
     print(opt)
@@ -49,7 +76,8 @@ if __name__ == "__main__":
     classes = load_classes(opt.class_path)
 
     # ckecking for GPU for Tensor
-    Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
+    Tensor = torch.cuda.FloatTensor if torch.cuda.is_available(
+    ) else torch.FloatTensor
 
     # camara capture
     cap = cv2.VideoCapture(opt.input_file_path)
@@ -62,11 +90,11 @@ if __name__ == "__main__":
     # print(v_height,v_width)
 
     # Output saving
-    if(opt.save_video):
+    if (opt.save_video):
         fourcc = cv2.VideoWriter_fourcc(*'MP4V')
 
         filename = opt.input_file_path.split("/")[-1]
-        filepath = os.path.join(opt.output_path,filename)
+        filepath = os.path.join(opt.output_path, filename)
 
         fps = cap.get(cv2.CAP_PROP_FPS)
         out = cv2.VideoWriter(filepath, fourcc, fps, (v_width, v_height))
@@ -102,7 +130,8 @@ if __name__ == "__main__":
         # Black image
         frame = np.zeros((x, y, 3), np.uint8)
 
-        frame[start_new_i_height: (start_new_i_height + v_height),start_new_i_width: (start_new_i_width + v_width)] = org_frame
+        frame[start_new_i_height:(start_new_i_height + v_height),
+              start_new_i_width:(start_new_i_width + v_width)] = org_frame
 
         # resizing to [416x 416]
         frame = cv2.resize(frame, (opt.frame_size, opt.frame_size))
@@ -126,7 +155,8 @@ if __name__ == "__main__":
         # Get detections
         with torch.no_grad():
             detections = model(frame)
-        detections = non_max_suppression_output(detections, opt.conf_thres, opt.nms_thres)
+        detections = non_max_suppression_output(detections, opt.conf_thres,
+                                                opt.nms_thres)
 
         # For each detection in detections
         detection = detections[0]
@@ -143,15 +173,17 @@ if __name__ == "__main__":
                 # Bounding box making and setting Bounding box title
                 if (int(cls_pred) == 0):
                     # WITH_MASK
-                    cv2.rectangle(org_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.rectangle(org_frame, (x1, y1), (x2, y2), (0, 255, 0),
+                                  2)
                 else:
                     # WITHOUT_MASK
-                    cv2.rectangle(org_frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                    cv2.rectangle(org_frame, (x1, y1), (x2, y2), (0, 0, 255),
+                                  2)
 
-                cv2.putText(org_frame, classes[int(cls_pred)] + ": %.2f" % conf, (x1, y1 + t_size[1] + 4),
-                            cv2.FONT_HERSHEY_PLAIN, 1,
-                            [225, 255, 255], 2)
-
+                cv2.putText(org_frame,
+                            classes[int(cls_pred)] + ": %.2f" % conf,
+                            (x1, y1 + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN,
+                            1, [225, 255, 255], 2)
 
         # FPS PRINTING
         # cv2.rectangle(org_frame, (0, 0), (175, 20), (0, 0, 0), -1)

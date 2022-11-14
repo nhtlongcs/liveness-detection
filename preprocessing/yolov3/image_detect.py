@@ -1,7 +1,7 @@
 from __future__ import division
 
 from models import Darknet
-from utils.utils import load_classes,non_max_suppression_output, non_max_suppression
+from utils.utils import load_classes, non_max_suppression_output, non_max_suppression
 
 import argparse
 from tqdm import tqdm
@@ -13,29 +13,56 @@ import numpy as np
 from torch.autograd import Variable
 
 import cv2
-def resize_bbox(x1,y1,x2,y2, maxw, maxh, ratio=1.3):
+
+
+def resize_bbox(x1, y1, x2, y2, maxw, maxh, ratio=1.3):
     w = x2 - x1
     h = y2 - y1
-    x1 = x1 - w*(ratio-1)/2
-    y1 = y1 - h*(ratio-1)/2
-    x2 = x2 + w*(ratio-1)/2
-    y2 = y2 + h*(ratio-1)/2
+    x1 = x1 - w * (ratio - 1) / 2
+    y1 = y1 - h * (ratio - 1) / 2
+    x2 = x2 + w * (ratio - 1) / 2
+    y2 = y2 + h * (ratio - 1) / 2
     x1 = max(0, x1)
     y1 = max(0, y1)
     x2 = min(maxw, x2)
     y2 = min(maxh, y2)
     return int(x1), int(y1), int(x2), int(y2)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_file_path", type=str, default="testing/input/images", help="path to images directory")
-    parser.add_argument("--output_path", type=str, default="testing/output/images", help="output image directory")
-    parser.add_argument("--model_def", type=str, default="config/yolov3_mask.cfg", help="path to model definition file")
-    parser.add_argument("--weights_path", type=str, default="checkpoints/yolov3_ckpt_35.pth", help="path to weights file")
-    parser.add_argument("--class_path", type=str, default="data/mask_dataset.names", help="path to class label file")
-    parser.add_argument("--conf_thres", type=float, default=0.8, help="object confidence threshold")
-    parser.add_argument("--nms_thres", type=float, default=0.3, help="iou thresshold for non-maximum suppression")
-    parser.add_argument("--frame_size", type=int, default=416, help="size of each image dimension")
+    parser.add_argument("--input_file_path",
+                        type=str,
+                        default="testing/input/images",
+                        help="path to images directory")
+    parser.add_argument("--output_path",
+                        type=str,
+                        default="testing/output/images",
+                        help="output image directory")
+    parser.add_argument("--model_def",
+                        type=str,
+                        default="config/yolov3_mask.cfg",
+                        help="path to model definition file")
+    parser.add_argument("--weights_path",
+                        type=str,
+                        default="checkpoints/yolov3_ckpt_35.pth",
+                        help="path to weights file")
+    parser.add_argument("--class_path",
+                        type=str,
+                        default="data/mask_dataset.names",
+                        help="path to class label file")
+    parser.add_argument("--conf_thres",
+                        type=float,
+                        default=0.8,
+                        help="object confidence threshold")
+    parser.add_argument("--nms_thres",
+                        type=float,
+                        default=0.3,
+                        help="iou thresshold for non-maximum suppression")
+    parser.add_argument("--frame_size",
+                        type=int,
+                        default=416,
+                        help="size of each image dimension")
 
     opt = parser.parse_args()
     print(opt)
@@ -64,9 +91,11 @@ if __name__ == "__main__":
     # Extracts class labels from file
     classes = load_classes(opt.class_path)
     print("classes: ", classes)
-    assert Path(opt.class_path).exists(), "class_path: %s does not exist" % opt.class_path
+    assert Path(opt.class_path).exists(
+    ), "class_path: %s does not exist" % opt.class_path
     # ckecking for GPU for Tensor
-    Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
+    Tensor = torch.cuda.FloatTensor if torch.cuda.is_available(
+    ) else torch.FloatTensor
 
     print("\nPerforming object detection:")
 
@@ -99,7 +128,8 @@ if __name__ == "__main__":
         start_new_i_height = int((y - i_height) / 2)
         start_new_i_width = int((x - i_width) / 2)
 
-        img[start_new_i_height: (start_new_i_height + i_height) ,start_new_i_width: (start_new_i_width + i_width) ] = org_img
+        img[start_new_i_height:(start_new_i_height + i_height),
+            start_new_i_width:(start_new_i_width + i_width)] = org_img
 
         #resizing to [416x 416]
         img = cv2.resize(img, (opt.frame_size, opt.frame_size))
@@ -125,43 +155,48 @@ if __name__ == "__main__":
         with torch.no_grad():
             detections = model(img)
 
-        detections = non_max_suppression_output(detections, opt.conf_thres, opt.nms_thres)
+        detections = non_max_suppression_output(detections, opt.conf_thres,
+                                                opt.nms_thres)
 
         # print(detections)
 
         # For accommodate results in original frame
         mul_constant = x / opt.frame_size
         # only get largest detection
-        
-        final_detection = None 
+
+        final_detection = None
         largest_area = -1
         # For each detection in detections
         for detection in detections:
             if detection is not None:
                 # print("{0} Detection found".format(len(detection)))
                 for x1, y1, x2, y2, conf, cls_conf, cls_pred in detection:
-                    
+
                     x1 = int(x1 * mul_constant - start_new_i_width)
                     y1 = int(y1 * mul_constant - start_new_i_height)
                     x2 = int(x2 * mul_constant - start_new_i_width)
                     y2 = int(y2 * mul_constant - start_new_i_height)
                     # Accommodate bounding box in original frame
-                    x1, y1, x2, y2 = resize_bbox(x1, y1, x2, y2, i_width, i_height)
+                    x1, y1, x2, y2 = resize_bbox(x1, y1, x2, y2, i_width,
+                                                 i_height)
                     area = abs(x2 - x1) * abs(y2 - y1)
                     if area > largest_area:
                         largest_area = area
                         final_detection = x1, y1, x2, y2, conf, cls_conf, cls_pred
-        
-        
+
         if final_detection is not None:
             x1, y1, x2, y2, conf, cls_conf, cls_pred = final_detection
             imagename_txt = imagename.split('.')[0] + '.txt'
-            out_filepath_txt = os.path.join(opt.output_path, 'boxes', imagename_txt)
+            out_filepath_txt = os.path.join(opt.output_path, 'boxes',
+                                            imagename_txt)
             with open(out_filepath_txt, 'a') as f:
-                f.write(f"{classes[int(cls_pred)]} {conf} {x1} {y1} {x2} {y2}\n")
+                f.write(
+                    f"{classes[int(cls_pred)]} {conf} {x1} {y1} {x2} {y2}\n")
             # Bounding box making and setting Bounding box title
-            crop_img = org_img[max(0, y1):min(y2, i_height), max(0, x1):min(x2, i_width)]
-            cv2.imwrite(os.path.join(opt.output_path, 'crop', imagename), crop_img)
+            crop_img = org_img[max(0, y1):min(y2, i_height),
+                               max(0, x1):min(x2, i_width)]
+            cv2.imwrite(os.path.join(opt.output_path, 'crop', imagename),
+                        crop_img)
             if (int(cls_pred) == 0):
                 # WITH_MASK
                 cv2.rectangle(org_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
@@ -169,13 +204,11 @@ if __name__ == "__main__":
                 #WITHOUT_MASK
                 cv2.rectangle(org_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
             # crop image and save
-            cv2.putText(org_img, classes[int(cls_pred)]+": %.2f" %conf, (x1, y1 + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1,
+            cv2.putText(org_img, classes[int(cls_pred)] + ": %.2f" % conf,
+                        (x1, y1 + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1,
                         [225, 255, 255], 2)
 
-
-
         out_filepath = os.path.join(opt.output_path, 'viz', imagename)
-        cv2.imwrite(out_filepath,org_img)
-
+        cv2.imwrite(out_filepath, org_img)
 
     # cv2.destroyAllWindows()

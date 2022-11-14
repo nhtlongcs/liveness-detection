@@ -8,12 +8,14 @@ from . import EXTRCT_REGISTRY
 
 @EXTRCT_REGISTRY.register()
 class EfficientNetExtractor(ExtractorNetwork):
+
     def __init__(self, version, from_pretrained=True, freeze=False):
         super().__init__()
         assert version in range(8)
         self.extractor = EfficientNet.from_name(f"efficientnet-b{version}")
         if from_pretrained:
-            self.extractor = EfficientNet.from_pretrained(f"efficientnet-b{version}")
+            self.extractor = EfficientNet.from_pretrained(
+                f"efficientnet-b{version}")
         self.feature_dim = self.extractor._fc.in_features
         if freeze:
             self.freeze()

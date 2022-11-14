@@ -14,11 +14,13 @@ from . import MODEL_REGISTRY
 
 @MODEL_REGISTRY.register()
 class ClsBase(pl.LightningModule):
+
     def __init__(self, config):
         super().__init__()
         self.cfg = config
         self.init_model()
-        self.learning_rate = self.cfg.get("trainer", {}).get("learning_rate", 1e-3)
+        self.learning_rate = self.cfg.get("trainer",
+                                          {}).get("learning_rate", 1e-3)
 
     @abc.abstractmethod
     def init_model(self):
@@ -27,21 +29,19 @@ class ClsBase(pl.LightningModule):
     def setup(self, stage: str):
         if stage != "predict":
             image_size = self.cfg["data"]["args"]["SIZE"]
-            image_transform = torchvision.transforms.Compose(
-                [
-                    torchvision.transforms.Resize((image_size, image_size)),
-                    torchvision.transforms.ToTensor(),
-                    torchvision.transforms.Normalize(
-                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                    ),
-                ]
-            )
+            image_transform = torchvision.transforms.Compose([
+                torchvision.transforms.Resize((image_size, image_size)),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                                 std=[0.229, 0.224, 0.225]),
+            ])
 
-            self.train_dataset = DATASET_REGISTRY.get(self.cfg["data"]["name"])(
-                **self.cfg["data"]["args"]["train"],
-                data_cfg=self.cfg["data"]["args"],
-                transform=image_transform,
-            )
+            self.train_dataset = DATASET_REGISTRY.get(
+                self.cfg["data"]["name"])(
+                    **self.cfg["data"]["args"]["train"],
+                    data_cfg=self.cfg["data"]["args"],
+                    transform=image_transform,
+                )
             self.val_dataset = DATASET_REGISTRY.get(self.cfg["data"]["name"])(
                 **self.cfg["data"]["args"]["val"],
                 data_cfg=self.cfg["data"]["args"],
@@ -50,8 +50,7 @@ class ClsBase(pl.LightningModule):
 
             self.metric = [
                 METRIC_REGISTRY.get(mcfg["name"])(**mcfg["args"])
-                if mcfg["args"]
-                else METRIC_REGISTRY.get(mcfg["name"])()
+                if mcfg["args"] else METRIC_REGISTRY.get(mcfg["name"])()
                 for mcfg in self.cfg["metric"]
             ]
 
@@ -72,7 +71,6 @@ class ClsBase(pl.LightningModule):
         self.log("train/loss", detach(loss))
 
         return {"loss": loss, "log": {"train_loss": detach(loss)}}
-
 
     def validation_step(self, batch, batch_idx):
         # 1. Get embeddings from model
@@ -112,7 +110,6 @@ class ClsBase(pl.LightningModule):
 
         self.log("val/loss", loss.cpu().numpy().item())
         return {**out, "log": out}
-        
 
     def train_dataloader(self):
         train_loader = DataLoader(
@@ -133,13 +130,14 @@ class ClsBase(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.learning_rate)
 
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            optimizer, 
-            milestones=[3, 5, 7], 
-        gamma=0.5)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+                                                         milestones=[3, 5, 7],
+                                                         gamma=0.5)
 
         return {
             "optimizer": optimizer,
-            "lr_scheduler": {"scheduler": scheduler, "interval": "epoch"},
+            "lr_scheduler": {
+                "scheduler": scheduler,
+                "interval": "epoch"
+            },
         }
-

@@ -17,24 +17,60 @@ from torch.utils.data import DataLoader
 from torch.autograd import Variable
 
 import warnings
+
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # from utils.logger import *
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--epochs", type=int, default=100, help="number of epochs")
-    parser.add_argument("--batch_size", type=int, default=6, help="size of each image batch")
-    parser.add_argument("--gradient_accumulations", type=int, default=2, help="number of gradient accums before step")
-    parser.add_argument("--model_def", type=str, default="config/yolov3_mask.cfg", help="path to model definition file")
-    parser.add_argument("--data_config", type=str, default="config/mask_dataset.data", help="path to data config file")
-    parser.add_argument("--pretrained_weights", type=str, default="weights/yolov3.weights", help="if specified starts from checkpoint model")
-    parser.add_argument("--n_cpu", type=int, default=8, help="number of cpu threads to use during batch generation")
-    parser.add_argument("--img_size", type=int, default=416, help="size of each image dimension")
-    parser.add_argument("--checkpoint_interval", type=int, default=1, help="interval between saving model weights")
-    parser.add_argument("--evaluation_interval", type=int, default=1, help="interval evaluations on validation set")
-    parser.add_argument("--compute_map", default=True, help="if True computes mAP every tenth batch")
-    parser.add_argument("--multiscale_training", default=True, help="allow for multi-scale training")
+    parser.add_argument("--epochs",
+                        type=int,
+                        default=100,
+                        help="number of epochs")
+    parser.add_argument("--batch_size",
+                        type=int,
+                        default=6,
+                        help="size of each image batch")
+    parser.add_argument("--gradient_accumulations",
+                        type=int,
+                        default=2,
+                        help="number of gradient accums before step")
+    parser.add_argument("--model_def",
+                        type=str,
+                        default="config/yolov3_mask.cfg",
+                        help="path to model definition file")
+    parser.add_argument("--data_config",
+                        type=str,
+                        default="config/mask_dataset.data",
+                        help="path to data config file")
+    parser.add_argument("--pretrained_weights",
+                        type=str,
+                        default="weights/yolov3.weights",
+                        help="if specified starts from checkpoint model")
+    parser.add_argument(
+        "--n_cpu",
+        type=int,
+        default=8,
+        help="number of cpu threads to use during batch generation")
+    parser.add_argument("--img_size",
+                        type=int,
+                        default=416,
+                        help="size of each image dimension")
+    parser.add_argument("--checkpoint_interval",
+                        type=int,
+                        default=1,
+                        help="interval between saving model weights")
+    parser.add_argument("--evaluation_interval",
+                        type=int,
+                        default=1,
+                        help="interval evaluations on validation set")
+    parser.add_argument("--compute_map",
+                        default=True,
+                        help="if True computes mAP every tenth batch")
+    parser.add_argument("--multiscale_training",
+                        default=True,
+                        help="allow for multi-scale training")
     opt = parser.parse_args()
     print(opt)
 
@@ -63,7 +99,9 @@ if __name__ == "__main__":
             model.load_darknet_weights(opt.pretrained_weights)
 
     # Get dataloader
-    dataset = ListDataset(train_path, augment=True, multiscale=opt.multiscale_training)
+    dataset = ListDataset(train_path,
+                          augment=True,
+                          multiscale=opt.multiscale_training)
     dataloader = torch.utils.data.DataLoader(
         dataset,
         batch_size=opt.batch_size,
@@ -95,8 +133,8 @@ if __name__ == "__main__":
                 optimizer.step()
                 optimizer.zero_grad()
 
-
-            log_str = "---- [Epoch %d/%d, Batch %d/%d] ----" % (epoch, opt.epochs, batch_i, len(dataloader))
+            log_str = "---- [Epoch %d/%d, Batch %d/%d] ----" % (
+                epoch, opt.epochs, batch_i, len(dataloader))
             log_str += f"Total loss {loss.item()}"
             print(log_str)
 
@@ -134,4 +172,7 @@ if __name__ == "__main__":
                 to_get_mAP = 999999999999
 
         if epoch % opt.checkpoint_interval == 0:
-            torch.save(model.state_dict(), "checkpoints/23-04-2020__02-35/yolov3_ckpt_{0}__'{1}'__'{2}'.pth".format(epoch ,loss.item(),to_get_mAP))
+            torch.save(
+                model.state_dict(),
+                "checkpoints/23-04-2020__02-35/yolov3_ckpt_{0}__'{1}'__'{2}'.pth"
+                .format(epoch, loss.item(), to_get_mAP))

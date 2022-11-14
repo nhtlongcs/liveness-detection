@@ -1,5 +1,6 @@
 from core.registry import Registry
 from PIL import Image
+
 DATASET_REGISTRY = Registry("DATASET")
 
 

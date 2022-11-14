@@ -5,14 +5,12 @@ import os
 
 def get_logger(logger_name="default", debug=False, save_to_dir=None):
     if debug:
-        log_format = (
-            "%(asctime)s - "
-            "%(levelname)s : "
-            "%(name)s - "
-            "%(pathname)s[%(lineno)d]:"
-            "%(funcName)s - "
-            "%(message)s"
-        )
+        log_format = ("%(asctime)s - "
+                      "%(levelname)s : "
+                      "%(name)s - "
+                      "%(pathname)s[%(lineno)d]:"
+                      "%(funcName)s - "
+                      "%(message)s")
     else:
         log_format = "%(asctime)s - " "%(levelname)s : " "%(name)s - " "%(message)s"
     bold_seq = "\033[1m"
@@ -32,7 +30,8 @@ def get_logger(logger_name="default", debug=False, save_to_dir=None):
         fh.setFormatter(formatter)
         logger.addHandler(fh)
 
-        fh = logging.FileHandler(os.path.join(save_to_dir, "log", "warning.log"))
+        fh = logging.FileHandler(
+            os.path.join(save_to_dir, "log", "warning.log"))
         fh.setLevel(logging.WARNING)
         formatter = logging.Formatter(log_format)
         fh.setFormatter(formatter)
@@ -45,4 +44,3 @@ def get_logger(logger_name="default", debug=False, save_to_dir=None):
         logger.addHandler(fh)
 
     return logger
-
