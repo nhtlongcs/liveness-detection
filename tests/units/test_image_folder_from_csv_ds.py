@@ -14,8 +14,8 @@ def test_vision_dataset(dataset_name="ImageFolderFromCSV"):
                                          std=[0.229, 0.224, 0.225]),
     ])
     ds = DATASET_REGISTRY.get(dataset_name)(
-        CSV_PATH="data/train/labels_keyframes_test.csv",
-        IMG_DIR="data/train/keyframes",
+        CSV_PATH="data_sample/train/labels_keyframes_test.csv",
+        IMG_DIR="data_sample/train/keyframes",
         transform=image_transform)
     dataloader = DataLoader(
         ds,
