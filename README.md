@@ -184,16 +184,22 @@ Expected result:
 
 ```bash
 ============================== test session starts ===============================
-platform darwin -- Python 3.7.12, pytest-7.1.1, pluggy-1.0.0
-rootdir: /Users/nhtlong/workspace/zaloai2022/
-collected 10 items
+platform linux -- Python 3.9.13, pytest-7.2.0, pluggy-1.0.0
+rootdir: /home/nhtlong/playground/zalo-ai/liveness-detection
+plugins: anyio-3.6.1, order-1.0.1
+collected 12 items                                                                                                                                                                                    
 
-tests/test_env.py ...                                                      [ 30%]
-tests/test_utils.py .                                                      [ 40%]
-tests/test_dataset.py .                                                    [ 50%]
-tests/test_eval.py .                                                       [ 60%]
-tests/test_extractor.py ...                                                [ 90%]
-tests/test_model.py .                                                      [100%]
+tests/test_args.py ...                                                      [ 25%]
+tests/test_data.py .                                                        [ 33%]
+tests/test_env.py .                                                         [ 41%]
+tests/units/test_evaluation.py .                                            [ 50%]
+tests/units/test_extractor.py ..                                            [ 66%]
+tests/units/test_image_folder_from_csv_ds.py .                              [ 75%]
+tests/units/test_model.py .                                                 [ 83%]
+tests/units/test_train_and_resume.py .                                      [ 91%]
+tests/units/test_load_and_predict.py .                                      [100%]
+...
+======================= 12 passed, 10 warnings in 30.95s =========================
 ```
 
 To run code-format

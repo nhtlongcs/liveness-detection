@@ -57,5 +57,7 @@ dependencies:
     # works for regular pip packages
     - efficientnet_pytorch
     - timm
+    # format code
+    - pre-commit
     # install local package
     - -e .
