@@ -6,6 +6,7 @@ import torch
 import torchvision
 from core.dataset import DATASET_REGISTRY
 from core.metrics import METRIC_REGISTRY
+from core.augmentations import TRANSFORM_REGISTRY
 from core.utils.device import detach
 from torch.utils.data import DataLoader
 
@@ -29,23 +30,21 @@ class ClsBase(pl.LightningModule):
     def setup(self, stage: str):
         if stage != "predict":
             image_size = self.cfg["data"]["args"]["SIZE"]
-            image_transform = torchvision.transforms.Compose([
-                torchvision.transforms.Resize((image_size, image_size)),
-                torchvision.transforms.ToTensor(),
-                torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                                 std=[0.229, 0.224, 0.225]),
-            ])
+            image_transform_train = TRANSFORM_REGISTRY.get(
+                'train_classify_tf')(img_size=image_size)
+            image_transform_test = TRANSFORM_REGISTRY.get('test_classify_tf')(
+                img_size=image_size)
 
             self.train_dataset = DATASET_REGISTRY.get(
                 self.cfg["data"]["name"])(
                     **self.cfg["data"]["args"]["train"],
                     data_cfg=self.cfg["data"]["args"],
-                    transform=image_transform,
+                    transform=image_transform_train,
                 )
             self.val_dataset = DATASET_REGISTRY.get(self.cfg["data"]["name"])(
                 **self.cfg["data"]["args"]["val"],
                 data_cfg=self.cfg["data"]["args"],
-                transform=image_transform,
+                transform=image_transform_test,
             )
 
             self.metric = [
@@ -133,6 +132,10 @@ class ClsBase(pl.LightningModule):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
                                                          milestones=[3, 5, 7],
                                                          gamma=0.5)
+
+        # self.scheduler = LambdaLR(
+        #     self.optimizer, lr_lambda=lambda epoch: 1.0 / (1.0 + epoch)
+        # )
 
         return {
             "optimizer": optimizer,

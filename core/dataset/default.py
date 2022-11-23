@@ -39,7 +39,8 @@ class ImageFolderFromCSV(Dataset):
         assert img_path.exists(), f"Image {img_path} does not exist"
         img = default_loader(img_path)
         if self.transform is not None:
-            img = self.transform(img)
+            img = self.transform(
+                image=img)['image']  # only works with albumentations
 
         assert label in [0, 1], f"Label {label} is not 0 or 1"
         return {
