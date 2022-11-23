@@ -57,7 +57,7 @@ def predict(model_name, cfg_path, resume_ckpt=None):
     prds = trainer.predict(model, dm)
 
 
-@pytest.mark.order(2)
+@pytest.mark.order(3)
 def test_predict(model_name="FrameClassifier"):
     cfg_path = "tests/configs/keyframes.yml"
     assert Path(cfg_path).exists(), "config file not found"

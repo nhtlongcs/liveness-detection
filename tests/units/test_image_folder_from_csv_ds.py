@@ -1,4 +1,5 @@
 from core.dataset import DATASET_REGISTRY
+from core.augmentations import TRANSFORM_REGISTRY
 import torchvision
 from torch.utils.data import DataLoader
 from pathlib import Path
@@ -7,15 +8,11 @@ import pytest
 
 @pytest.mark.order(1)
 def test_vision_dataset(dataset_name="ImageFolderFromCSV"):
-    image_transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize((288, 288)),
-        torchvision.transforms.ToTensor(),
-        torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225]),
-    ])
+    image_transform = TRANSFORM_REGISTRY.get('train_classify_tf')(img_size=380)
+
     ds = DATASET_REGISTRY.get(dataset_name)(
-        CSV_PATH="data_sample/train/labels_keyframes_test.csv",
-        IMG_DIR="data_sample/train/keyframes",
+        CSV_PATH="data/train/labels_keyframes_test.csv",
+        IMG_DIR="data/train/keyframes",
         transform=image_transform)
     dataloader = DataLoader(
         ds,

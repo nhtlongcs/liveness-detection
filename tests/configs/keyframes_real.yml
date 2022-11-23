@@ -12,21 +12,21 @@ global:
 data:
   name: ImageFolderFromCSV
   args:
-    SIZE: 224
+    SIZE: 380
     train:
-      CSV_PATH: data_sample/train/labels_keyframes_train.csv
-      IMG_DIR: data_sample/train/keyframes/
+      CSV_PATH: data/train/labels_keyframes_train.csv
+      IMG_DIR: data/train/keyframes/
       loader:
-        batch_size: 32
-        num_workers: 2
+        batch_size: 2
+        num_workers: 1
         shuffle: True
         drop_last: True
     val:
-      CSV_PATH: data_sample/train/labels_keyframes_test.csv
-      IMG_DIR: data_sample/train/keyframes/
+      CSV_PATH: data/train/labels_keyframes_test.csv
+      IMG_DIR: data/train/keyframes/
       loader:
-        batch_size: 32
-        num_workers: 2
+        batch_size: 2
+        num_workers: 1
         shuffle: False
         drop_last: False
 extractors:

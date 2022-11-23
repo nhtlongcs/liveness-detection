@@ -40,7 +40,7 @@ def train(model_name, cfg_path, resume_ckpt=None):
     del checkpoint_callback
 
 
-@pytest.mark.order(1)
+@pytest.mark.order(2)
 def test_trainer(model_name="FrameClassifier"):
     cfg_path = "tests/configs/keyframes.yml"
     assert Path(cfg_path).exists(), "config file not found"
