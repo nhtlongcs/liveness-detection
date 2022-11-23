@@ -1,32 +1,15 @@
-import torch.nn as nn
+import torch
 import torch.nn.functional as F
 from core.extractors import EXTRCT_REGISTRY
-
-from . import MODEL_REGISTRY
-from .abstract import ClsBase
 from core.utils.losses import FocalLoss
 
-
-class ClassifyBlock(nn.Module):
-
-    def __init__(self, inp_dim, num_cls, embed_dim=1024) -> None:
-        super().__init__()
-        self.model = nn.Sequential(
-            nn.Linear(inp_dim, embed_dim),
-            nn.BatchNorm1d(embed_dim),
-            nn.ReLU(),
-        )
-        self.projection = nn.Linear(embed_dim, num_cls)
-
-    def forward(self, x, return_embed=False):
-        x = self.model(x)
-        if return_embed:
-            return x, self.projection(x)
-        return self.projection(x)
+from . import MODEL_REGISTRY
+from .base import SuperviseModel
+from .utils import ClassifyBlock
 
 
 @MODEL_REGISTRY.register()
-class Classifier(ClsBase):
+class Classifier(SuperviseModel):
 
     def __init__(self, config):
         super().__init__(config)

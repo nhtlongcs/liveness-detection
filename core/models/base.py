@@ -14,7 +14,7 @@ from . import MODEL_REGISTRY
 
 
 @MODEL_REGISTRY.register()
-class ClsBase(pl.LightningModule):
+class SuperviseModel(pl.LightningModule):
 
     def __init__(self, config):
         super().__init__()
