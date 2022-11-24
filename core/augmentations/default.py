@@ -36,7 +36,6 @@ def train_classify_tf(img_size: int):
         Resize(img_size, img_size),
         HorizontalFlip(p=0.5),
         VerticalFlip(p=0.5),
-        ShiftScaleRotate(p=0.5),
         Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ToTensorV2(),
     ])
@@ -49,7 +48,6 @@ def test_classify_tf(img_size: int, aug: bool = False):
             Resize(img_size, img_size),
             HorizontalFlip(p=0.5),
             VerticalFlip(p=0.5),
-            ShiftScaleRotate(p=0.5),
             Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             ToTensorV2(),
         ])
