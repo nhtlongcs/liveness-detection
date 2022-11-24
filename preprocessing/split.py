@@ -49,7 +49,13 @@ def split(df, train_size=0.95, key="filename"):
 
 
 def sanity_check(df_raw, df_train, df_test):
-    assert len(df_raw) - len(NOT_USE_VIDEOS) == len(df_train) + len(df_test)
+    # check intersect not use videos and raw df
+    if len(set(df_raw["filename"].unique()).intersection(
+            set(NOT_USE_VIDEOS))) == 0:
+        assert len(df_raw) == len(df_train) + len(df_test)
+    else:
+        assert len(df_raw) - len(NOT_USE_VIDEOS) == len(df_train) + len(
+            df_test)
     assert set(df_test["filename"].unique()).intersection(
         set(df_train["filename"].unique())) == set(
         ), "Train and test sets should not have any common videos"
