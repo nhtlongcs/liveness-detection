@@ -4,7 +4,9 @@ from albumentations import (Compose, Normalize, RandomBrightnessContrast,
                             MedianBlur, Blur, RandomRotate90, HorizontalFlip,
                             VerticalFlip, HueSaturationValue, RandomSizedCrop,
                             IAASharpen)
-
+import cv2
+# https://github.com/albumentations-team/albumentations/issues/1246
+cv2.setNumThreads(0)
 from albumentations.pytorch.transforms import ToTensorV2
 
 from . import TRANSFORM_REGISTRY
