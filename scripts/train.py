@@ -7,6 +7,7 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.trainer import seed_everything
 
 from core.models import MODEL_REGISTRY
+from core_pkg.models import MODEL_REGISTRY
 from core.callbacks import CALLBACKS_REGISTRY
 from core.utils.path import prepare_checkpoint_path
 import tabulate

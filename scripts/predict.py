@@ -10,6 +10,7 @@ from core.dataset.default import ImageFolderFromCSV
 from core.models.abstract import ClsBase
 from core.dataset import DATASET_REGISTRY
 from core.models import MODEL_REGISTRY
+from core_pkg.models import MODEL_REGISTRY
 
 import torchvision
 import pytorch_lightning as pl

@@ -3,6 +3,8 @@ from core.opt import Opts
 
 from pathlib import Path
 from core.models import MODEL_REGISTRY
+from core_pkg.models import MODEL_REGISTRY
+
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 import pytorch_lightning as pl
