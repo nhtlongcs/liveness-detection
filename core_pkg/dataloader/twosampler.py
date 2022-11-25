@@ -61,30 +61,6 @@ def grouper(iterable, n):
     return zip(*args)
 
 
-# class ConcatDataset(data.ConcatDataset):
-#     """
-#     Concatenate dataset and do sampling randomly
-#     datasets: `Iterable[data.Dataset]`
-#         list of datasets
-#     """
-
-#     def __init__(self, datasets: Iterable[data.Dataset], **kwargs) -> None:
-#         super().__init__(datasets)
-
-#         # Workaround, not a good solution
-#         self.classnames = datasets[0].classnames
-#         self.collate_fn = datasets[0].collate_fn
-
-# def __getattr__(self, attr):
-#     if hasattr(self, attr):
-#         return getattr(self, attr)
-
-#     if hasattr(self.datasets[0], attr):
-#         return getattr(self.datasets[0], attr)
-
-#     raise AttributeError
-
-
 class TwoStreamDataLoader(torch.utils.data.DataLoader):
     """
     Two streams for dataset. Separate batch with additional `split point` 

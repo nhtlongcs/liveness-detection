@@ -11,8 +11,6 @@ from core.utils.device import detach
 from torch.utils.data import DataLoader
 from core.models import MODEL_REGISTRY
 
-from core_pkg.lr import HybridLrScheduler
-from core_pkg.optim import HybridOptim
 from core_pkg.dataloader import TwoStreamDataLoader
 
 
