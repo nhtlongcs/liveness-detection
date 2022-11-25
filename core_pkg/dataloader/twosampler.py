@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from torch.utils.data.sampler import BatchSampler
 import torch.utils.data as data
+from torch.utils.data import ConcatDataset as ConcatDataset
 
 
 class TwoStreamBatchSampler(BatchSampler):
@@ -60,28 +61,28 @@ def grouper(iterable, n):
     return zip(*args)
 
 
-class ConcatDataset(data.ConcatDataset):
-    """
-    Concatenate dataset and do sampling randomly
-    datasets: `Iterable[data.Dataset]`
-        list of datasets
-    """
+# class ConcatDataset(data.ConcatDataset):
+#     """
+#     Concatenate dataset and do sampling randomly
+#     datasets: `Iterable[data.Dataset]`
+#         list of datasets
+#     """
 
-    def __init__(self, datasets: Iterable[data.Dataset], **kwargs) -> None:
-        super().__init__(datasets)
+#     def __init__(self, datasets: Iterable[data.Dataset], **kwargs) -> None:
+#         super().__init__(datasets)
 
-        # Workaround, not a good solution
-        self.classnames = datasets[0].classnames
-        self.collate_fn = datasets[0].collate_fn
+#         # Workaround, not a good solution
+#         self.classnames = datasets[0].classnames
+#         self.collate_fn = datasets[0].collate_fn
 
-    def __getattr__(self, attr):
-        if hasattr(self, attr):
-            return getattr(self, attr)
+# def __getattr__(self, attr):
+#     if hasattr(self, attr):
+#         return getattr(self, attr)
 
-        if hasattr(self.datasets[0], attr):
-            return getattr(self.datasets[0], attr)
+#     if hasattr(self.datasets[0], attr):
+#         return getattr(self.datasets[0], attr)
 
-        raise AttributeError
+#     raise AttributeError
 
 
 class TwoStreamDataLoader(torch.utils.data.DataLoader):
@@ -94,16 +95,15 @@ class TwoStreamDataLoader(torch.utils.data.DataLoader):
                  **kwargs) -> None:
         self.dataset_l = dataset_l
         self.dataset_u = dataset_u
-
+        # self.classnames = dataset_l.classnames
         cat_dataset = ConcatDataset([dataset_l, dataset_u])
         total_length = len(dataset_l) + len(dataset_u)
         labeled_idxs = list(range(0, len(dataset_l)))
         unlabeled_idxs = list(range(len(dataset_l), total_length))
         self.batch_sizes = batch_sizes
 
-        self.num_classes = dataset_l.num_classes
-        self._encode_masks = dataset_l._encode_masks
-
+        # self.num_classes = dataset_l.num_classes
+        # self._encode_masks = dataset_l._encode_masks
         sampler = TwoStreamBatchSampler(primary_indices=labeled_idxs,
                                         secondary_indices=unlabeled_idxs,
                                         primary_batch_size=batch_sizes[0],
@@ -118,21 +118,14 @@ class TwoStreamDataLoader(torch.utils.data.DataLoader):
         """
         Mutual collate
         """
-
-        imgs = torch.stack([i['input'] for i in batch], dim=0)
-        masks = torch.stack([i['target'] for i in batch if 'target' in i],
-                            dim=0)
-        img_names = [i['img_name'] for i in batch]
-        ori_sizes = [i['ori_size'] for i in batch]
-        sids = [i['sid'] for i in batch if 'sid' in i]
-
-        masks = self._encode_masks(masks)
-
-        return {
-            'inputs': imgs,
-            'targets': masks,
-            'img_names': img_names,
-            'ori_sizes': ori_sizes,
-            'split_pos': masks.shape[0],
-            'sids': sids
+        batch_dict = {
+            "images":
+            torch.stack([x['image'] for x in batch]),
+            "labels":
+            torch.stack([x['label'] for x in batch if 'label' in x], dim=0),
+            "filenames": [x['filename'] for x in batch],
+            "video_ids": [x['video_id'] for x in batch],
+            "frame_ids": [x['frame_id'] for x in batch],
         }
+        batch_dict.update({'split_pos': batch_dict['labels'].shape[0]})
+        return batch_dict

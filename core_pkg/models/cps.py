@@ -9,10 +9,11 @@ from core.metrics import METRIC_REGISTRY
 from core.augmentations import TRANSFORM_REGISTRY
 from core.utils.device import detach
 from torch.utils.data import DataLoader
+from core.models import MODEL_REGISTRY
 
-from core.lr.ss import HybridLrScheduler
-from core.optim.ss import HybridOptim
-from . import MODEL_REGISTRY
+from core_pkg.lr import HybridLrScheduler
+from core_pkg.optim import HybridOptim
+from core_pkg.dataloader import TwoStreamDataLoader
 
 
 @MODEL_REGISTRY.register()
@@ -24,6 +25,10 @@ class SemiSuperviseModel(pl.LightningModule):
         self.branch1 = None  # this branch should be implement in subclass
         self.branch2 = None  # this branch should be implement in subclass
         self.init_model()
+
+        self.consistency: float = self.cfg.model["args"]["consistency"]
+        self.consistency_rampup = self.cfg.model["args"]["consistency_rampup"]
+
         self.learning_rate1 = self.cfg.get("trainer",
                                            {}).get("learning_rate1", 1e-3)
         self.learning_rate2 = self.cfg.get("trainer",
@@ -75,13 +80,15 @@ class SemiSuperviseModel(pl.LightningModule):
     def compute_loss(self, visual_embeddings, nlang_embeddings, batch):
         raise NotImplementedError
 
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch, batch_idx, optimizer_idx):
         # 1. Get embeddings from model
         output = self.forward(batch)
         # 2. Calculate loss
-        loss = self.compute_loss(**output, batch=batch).mean()
+        # loss, loss_dict = self.compute_loss(**output, batch=batch).mean() # .mean?
+        loss, loss_dict = self.compute_loss(output, batch=batch)
         # 3. Update monitor
-        self.log("train/loss", detach(loss))
+        for k, v in loss_dict.items():
+            self.log(f"train/{k}", v)
 
         return {"loss": loss, "log": {"train_loss": detach(loss)}}
 
@@ -89,7 +96,7 @@ class SemiSuperviseModel(pl.LightningModule):
         # 1. Get embeddings from model
         output = self.forward(batch)
         # 2. Calculate loss
-        loss = self.compute_loss(**output, batch=batch)
+        loss, _ = self.compute_loss(output, batch=batch)
         # 3. Update metric for each batch
         for m in self.metric:
             m.update(output, batch)
@@ -125,10 +132,10 @@ class SemiSuperviseModel(pl.LightningModule):
         return {**out, "log": out}
 
     def train_dataloader(self):
-        train_loader = DataLoader(
+        train_loader = TwoStreamDataLoader(
             **self.cfg["data"]["args"]["train"]["loader"],
-            dataset=self.train_dataset,
-            collate_fn=self.train_dataset.collate_fn,
+            dataset_l=self.labelled_train_dataset,
+            dataset_u=self.unlabelled_train_dataset,
         )
         return train_loader
 
@@ -154,23 +161,27 @@ class SemiSuperviseModel(pl.LightningModule):
                                                           milestones=[3, 5, 7],
                                                           gamma=0.5)
 
-        optimizer = HybridOptim([optimizer1, optimizer2])
-        LRScheduler1 = HybridLrScheduler(optimizer1,
-                                         idx=1,
-                                         lr_scheduler=scheduler1)
-        LRScheduler2 = HybridLrScheduler(optimizer2,
-                                         idx=2,
-                                         lr_scheduler=scheduler2)
-
-        return {
-            "optimizer":
-            optimizer,
-            "lr_scheduler": [{
-                "scheduler": LRScheduler1,
+        # optimizer = HybridOptim([optimizer1, optimizer2])
+        # LRScheduler1 = HybridLrScheduler(optimizer1,
+        #                                  idx=1,
+        #                                  lr_scheduler=scheduler1)
+        # LRScheduler2 = HybridLrScheduler(optimizer2,
+        #                                  idx=2,
+        #                                  lr_scheduler=scheduler2)
+        # return [optimizer1, optimizer2], [scheduler1,scheduler2]
+        return ({
+            "optimizer": optimizer1,
+            "lr_scheduler": {
+                "scheduler": scheduler1,
                 "interval": "epoch"
-            }, {
-                "scheduler": LRScheduler2,
+            },
+            "optimizer_idx": 1
+        }, {
+            "optimizer": optimizer2,
+            "lr_scheduler": {
+                "scheduler": scheduler2,
                 "interval": "epoch"
-            }]
-        }
+            },
+            "optimizer_idx": 2
+        })
         # lr_scheduler input should be a single scheduler, or a list of schedulers in case multiple ones are present, or ``None`` (lightning document)
