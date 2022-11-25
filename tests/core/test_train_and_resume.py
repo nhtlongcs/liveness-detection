@@ -51,3 +51,7 @@ def test_trainer(model_name="FrameClassifier"):
         cfg_path,
         resume_ckpt="./tmp/lightning_logs/version_0/checkpoints/last.ckpt",
     )
+
+
+if __name__ == "__main__":
+    test_trainer()

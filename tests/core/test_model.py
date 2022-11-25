@@ -14,3 +14,7 @@ def test_model(model_name="FrameClassifier"):
     print(MODEL_REGISTRY)
     model = MODEL_REGISTRY.get(model_name)(cfg)
     model.prepare_data()
+
+
+if __name__ == "__main__":
+    test_model()

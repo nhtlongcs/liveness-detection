@@ -16,6 +16,7 @@ import pytest
 
 
 @pytest.mark.order(2)
+@pytest.mark.skip(reason="no way of currently testing this")
 def test_evaluate(model_name='FrameClassifier'):
     cfg_path = "tests/configs/keyframes.yml"
     assert Path(cfg_path).exists(), "config file not found"
@@ -56,3 +57,7 @@ def test_evaluate(model_name='FrameClassifier'):
                 # 4. Reset metric
                 metric.reset()
             break
+
+
+if __name__ == "__main__":
+    test_evaluate()
