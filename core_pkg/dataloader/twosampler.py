@@ -20,12 +20,13 @@ class TwoStreamBatchSampler(BatchSampler):
     """
 
     def __init__(self, primary_indices, secondary_indices, primary_batch_size,
-                 secondary_batch_size):
+                 secondary_batch_size, *args, **kwargs):
         self.primary_indices = primary_indices
         self.secondary_indices = secondary_indices
         self.secondary_batch_size = secondary_batch_size
         self.primary_batch_size = primary_batch_size
-
+        self.batch_size = primary_batch_size + secondary_batch_size
+        self.drop_last = False  # Cannot drop last batch
         assert len(self.primary_indices) >= self.primary_batch_size > 0
         assert len(self.secondary_indices) >= self.secondary_batch_size > 0
 
@@ -77,7 +78,6 @@ class TwoStreamDataLoader(torch.utils.data.DataLoader):
         labeled_idxs = list(range(0, len(dataset_l)))
         unlabeled_idxs = list(range(len(dataset_l), total_length))
         self.batch_sizes = batch_sizes
-
         # self.num_classes = dataset_l.num_classes
         # self._encode_masks = dataset_l._encode_masks
         sampler = TwoStreamBatchSampler(primary_indices=labeled_idxs,

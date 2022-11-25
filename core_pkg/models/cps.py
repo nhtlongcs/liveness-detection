@@ -27,10 +27,8 @@ class SemiSuperviseModel(pl.LightningModule):
         self.consistency: float = self.cfg.model["args"]["consistency"]
         self.consistency_rampup = self.cfg.model["args"]["consistency_rampup"]
 
-        self.learning_rate1 = self.cfg.get("trainer",
-                                           {}).get("learning_rate1", 1e-3)
-        self.learning_rate2 = self.cfg.get("trainer",
-                                           {}).get("learning_rate2", 1e-3)
+        self.learning_rate1 = self.cfg.get("trainer", {}).get("lr1", 1e-3)
+        self.learning_rate2 = self.cfg.get("trainer", {}).get("lr2", 1e-3)
 
     @abc.abstractmethod
     def init_model(self):
@@ -56,6 +54,7 @@ class SemiSuperviseModel(pl.LightningModule):
                     **self.cfg["data"]["args"]["val"],
                     data_cfg=self.cfg["data"]["args"],
                     transform=image_transform_test,
+                    return_lbl=False,
                 )
 
             self.val_dataset = DATASET_REGISTRY.get(self.cfg["data"]["name"])(
@@ -159,27 +158,16 @@ class SemiSuperviseModel(pl.LightningModule):
                                                           milestones=[3, 5, 7],
                                                           gamma=0.5)
 
-        # optimizer = HybridOptim([optimizer1, optimizer2])
-        # LRScheduler1 = HybridLrScheduler(optimizer1,
-        #                                  idx=1,
-        #                                  lr_scheduler=scheduler1)
-        # LRScheduler2 = HybridLrScheduler(optimizer2,
-        #                                  idx=2,
-        #                                  lr_scheduler=scheduler2)
-        # return [optimizer1, optimizer2], [scheduler1,scheduler2]
         return ({
             "optimizer": optimizer1,
             "lr_scheduler": {
                 "scheduler": scheduler1,
                 "interval": "epoch"
             },
-            "optimizer_idx": 1
         }, {
             "optimizer": optimizer2,
             "lr_scheduler": {
                 "scheduler": scheduler2,
                 "interval": "epoch"
             },
-            "optimizer_idx": 2
         })
-        # lr_scheduler input should be a single scheduler, or a list of schedulers in case multiple ones are present, or ``None`` (lightning document)

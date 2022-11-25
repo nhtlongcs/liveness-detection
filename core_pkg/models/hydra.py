@@ -81,6 +81,9 @@ class DualClassifier(SemiSuperviseModel):
             split_pos = len(batch["labels"])
         else:
             split_pos = batch['split_pos']
+            assert split_pos < len(
+                batch["images"]
+            ), "split_pos must be less than batch size in training config"
 
         outputs_soft1 = torch.softmax(logits1, dim=1)
         outputs_soft2 = torch.softmax(logits2, dim=1)
@@ -96,11 +99,15 @@ class DualClassifier(SemiSuperviseModel):
         supLoss2 = self.compute_supervised_loss(logits2[:split_pos], batch)
 
         # Unsupervised loss
-        unsupLoss1 = self.compute_unsupervised_loss(
-            logits1[split_pos:], batch={'labels': pseudo_outputs2})
-        unsupLoss2 = self.compute_unsupervised_loss(
-            logits2[split_pos:], batch={'labels': pseudo_outputs1})
-
+        if split_pos == len(batch["images"]):
+            unsupLoss1 = torch.tensor(0.0).to(self.device)
+            unsupLoss2 = torch.tensor(0.0).to(self.device)
+        else:
+            unsupLoss1 = self.compute_unsupervised_loss(
+                logits1[split_pos:], batch={'labels': pseudo_outputs2})
+            unsupLoss2 = self.compute_unsupervised_loss(
+                logits2[split_pos:], batch={'labels': pseudo_outputs1})
+        # import pdb; pdb.set_trace()
         # https://github.com/Lightning-AI/lightning/issues/1424
         consistency_weight = self.get_current_consistency_weight(
             self.current_epoch)
@@ -108,6 +115,7 @@ class DualClassifier(SemiSuperviseModel):
         model1_loss = supLoss1 + consistency_weight * unsupLoss1
         model2_loss = supLoss2 + consistency_weight * unsupLoss2
         total_loss = model1_loss + model2_loss
+        # import pdb; pdb.set_trace()
 
         total_loss_dict = {
             'loss': total_loss.item(),
