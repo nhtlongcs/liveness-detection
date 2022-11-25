@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class ClassifyBlock(nn.Module):
@@ -17,3 +18,14 @@ class ClassifyBlock(nn.Module):
         if return_embed:
             return x, self.projection(x)
         return self.projection(x)
+
+
+class NormalizeBlock(nn.Module):
+
+    def __init__(self, p=2, dim=-1) -> None:
+        super().__init__()
+        self.p = p
+        self.dim = dim
+
+    def forward(self, x):
+        return F.normalize(x, p=self.p, dim=self.dim)

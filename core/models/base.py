@@ -115,6 +115,9 @@ class SuperviseModel(pl.LightningModule):
             **self.cfg["data"]["args"]["train"]["loader"],
             dataset=self.train_dataset,
             collate_fn=self.train_dataset.collate_fn,
+            pin_memory=
+            True,  # set to True to enable faster data transfer to CUDA-enabled GPUs. 
+            # Should be set in conjunction with num_workers > 0. This option take more memory.
         )
         return train_loader
 
@@ -123,6 +126,9 @@ class SuperviseModel(pl.LightningModule):
             **self.cfg["data"]["args"]["val"]["loader"],
             dataset=self.val_dataset,
             collate_fn=self.val_dataset.collate_fn,
+            pin_memory=
+            True,  # set to True to enable faster data transfer to CUDA-enabled GPUs. 
+            # Should be set in conjunction with num_workers > 0. This option take more memory.
         )
         return val_loader
 
