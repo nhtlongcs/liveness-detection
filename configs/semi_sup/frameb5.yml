@@ -1,0 +1,88 @@
+global:
+  username: nhtlong
+  project_name: "zaloai2022"
+  name: "frameDualB5-model"
+  save_dir: ./runs
+  use_fp16: true
+  debug: false
+  verbose: true
+  SEED: 1480
+  pretrained: null
+  resume: null
+  find_lr: False
+data:
+  name: ImageFolderFromCSV
+  args:
+    SIZE: 380
+    train:
+      CSV_PATH: data/train/labels_keyframes_train.csv
+      IMG_DIR: data/train/keyframes/
+      loader:
+        batch_sizes: [28, 4] # using 2 sampler, batchsize = sum(batch_sizes) 32
+        num_workers: 8
+    val:
+      CSV_PATH: data/train/labels_keyframes_test.csv
+      IMG_DIR: data/train/keyframes/
+      loader:
+        batch_size: 32
+        num_workers: 8
+        shuffle: False
+        drop_last: False
+model:
+  name: DualClassifier
+  args:
+      NUM_CLASS: 2 
+      consistency: 0.1
+      consistency_rampup: 5
+  branch1:
+    args:
+      EMBED_DIM: 1024
+  branch2:
+    args:
+      EMBED_DIM: 1024
+extractors:
+  branch1:
+    img_encoder:
+      name: EfficientNetExtractor
+      args:
+        version: 4
+        from_pretrained: True
+        freeze: False
+  branch2:
+    img_encoder:
+      name: EfficientNetExtractor
+      args:
+        version: 4
+        from_pretrained: True
+        freeze: False
+metric:
+  - name: Accuracy
+    args:
+      label_key: "labels"
+trainer:
+  num_epochs: 100
+  clip_grad: 10.0
+  evaluate_interval: 1
+  print_interval: 5
+  save_interval: 1000
+  accumulate_grad_batches: 4
+  lr1: 0.0001
+  lr2: 0.0001
+callbacks:
+  - name: ModelCheckpoint
+    args:
+      filename: "FrameDualClfB7-{epoch}-{val/Accuracy:.4f}"
+      monitor: "val/Accuracy"
+      verbose: True
+      save_top_k: 3
+      mode: max
+  - name: EarlyStopping
+    args:
+      monitor: "val/Accuracy"
+      min_delta: 0.0001
+      patience: 15
+      verbose: False
+      mode: max
+  - name: LearningRateMonitor
+    args:
+      logging_interval: step

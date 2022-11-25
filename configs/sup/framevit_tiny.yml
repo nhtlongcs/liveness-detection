@@ -1,8 +1,8 @@
 global:
   username: nhtlong
-  project_name: "zaloai-faceB7-clf"
-  name: "faceB7-model"
-  save_dir: ./runs
+  project_name: "zaloai2022"
+  name: "frameViT384-Tiny"
+  save_dir: ./runs2
   use_fp16: true
   debug: false
   verbose: true
@@ -13,28 +13,28 @@ global:
 data:
   name: ImageFolderFromCSV
   args:
-    SIZE: 380
+    SIZE: 384
     train:
-      CSV_PATH: data/train/labels_bbox_train.csv
-      IMG_DIR: data/train/faces/crop/
+      CSV_PATH: data/train/labels_keyframes_train.csv
+      IMG_DIR: data/train/keyframes/
       loader:
-        batch_size: 16
-        num_workers: 8
+        batch_size: 64
+        num_workers: 0
         shuffle: True
         drop_last: True
     val:
-      CSV_PATH: data/train/labels_bbox_test.csv
-      IMG_DIR: data/train/faces/crop/
+      CSV_PATH: data/train/labels_keyframes_test.csv
+      IMG_DIR: data/train/keyframes/
       loader:
-        batch_size: 32
-        num_workers: 8
+        batch_size: 64
+        num_workers: 0
         shuffle: False
         drop_last: False
 extractors:
   img_encoder:
-    name: EfficientNetExtractor
+    name: VitNetExtractor
     args:
-      version: 7
+      version: vit_tiny_patch16_384
       from_pretrained: True
       freeze: False
 model:
@@ -47,8 +47,8 @@ metric:
     args:
       label_key: "labels"
 trainer:
-  lr: 0.00017
-  num_epochs: 10000
+  lr: 0.00036
+  num_epochs: 100
   clip_grad: 10.0
   evaluate_interval: 1
   print_interval: 20
@@ -57,7 +57,7 @@ trainer:
 callbacks:
   - name: ModelCheckpoint
     args:
-      filename: "faceB7-{epoch}-{val/Accuracy:.4f}"
+      filename: "frameViT384Tiny-{epoch}-{val/Accuracy:.4f}"
       monitor: "val/Accuracy"
       verbose: True
       save_top_k: 3

@@ -1,30 +1,29 @@
 global:
   username: nhtlong
-  project_name: "zaloai-face-clf"
-  name: "faceB5-model"
-  save_dir: ./runs2
+  project_name: "zaloai2022"
+  name: "frameB4-model"
+  save_dir: ./runs
   use_fp16: true
   debug: false
   verbose: true
   SEED: 1337
   pretrained: null
   resume: null
-  find_lr: false
 data:
   name: ImageFolderFromCSV
   args:
     SIZE: 380
     train:
-      CSV_PATH: data/train/labels_bbox_train.csv
-      IMG_DIR: data/train/faces/crop/
+      CSV_PATH: data/train/labels_keyframes_train.csv
+      IMG_DIR: data/train/keyframes/
       loader:
-        batch_size: 16
+        batch_size: 32
         num_workers: 8
         shuffle: True
         drop_last: True
     val:
-      CSV_PATH: data/train/labels_bbox_test.csv
-      IMG_DIR: data/train/faces/crop/
+      CSV_PATH: data/train/labels_keyframes_test.csv
+      IMG_DIR: data/train/keyframes/
       loader:
         batch_size: 32
         num_workers: 8
@@ -34,7 +33,7 @@ extractors:
   img_encoder:
     name: EfficientNetExtractor
     args:
-      version: 5
+      version: 4
       from_pretrained: True
       freeze: False
 model:
@@ -47,17 +46,16 @@ metric:
     args:
       label_key: "labels"
 trainer:
-  lr: 0.0004
+  lr: 0.001
   num_epochs: 10000
   clip_grad: 10.0
   evaluate_interval: 1
   print_interval: 20
   save_interval: 1000
-  accumulate_grad_batches: 4
 callbacks:
   - name: ModelCheckpoint
     args:
-      filename: "faceB5-{epoch}-{val/Accuracy:.4f}"
+      filename: "FrameClfB4-{epoch}-{val/Accuracy:.4f}"
       monitor: "val/Accuracy"
       verbose: True
       save_top_k: 3

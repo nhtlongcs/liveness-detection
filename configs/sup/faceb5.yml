@@ -1,7 +1,7 @@
 global:
   username: nhtlong
-  project_name: "zaloai-faceViT-clf"
-  name: "faceViT384-model"
+  project_name: "zaloai2022"
+  name: "faceB5-model"
   save_dir: ./runs2
   use_fp16: true
   debug: false
@@ -13,12 +13,12 @@ global:
 data:
   name: ImageFolderFromCSV
   args:
-    SIZE: 384
+    SIZE: 380
     train:
       CSV_PATH: data/train/labels_bbox_train.csv
       IMG_DIR: data/train/faces/crop/
       loader:
-        batch_size: 32
+        batch_size: 16
         num_workers: 8
         shuffle: True
         drop_last: True
@@ -32,10 +32,9 @@ data:
         drop_last: False
 extractors:
   img_encoder:
-    name: VitNetExtractor
+    name: EfficientNetExtractor
     args:
-      # version: vit_base_patch16_384
-      version: vit_tiny_patch16_384
+      version: 5
       from_pretrained: True
       freeze: False
 model:
@@ -48,8 +47,8 @@ metric:
     args:
       label_key: "labels"
 trainer:
-  lr: 0.0001
-  num_epochs: 100
+  lr: 0.0004
+  num_epochs: 10000
   clip_grad: 10.0
   evaluate_interval: 1
   print_interval: 20
@@ -58,7 +57,7 @@ trainer:
 callbacks:
   - name: ModelCheckpoint
     args:
-      filename: "faceViT384-{epoch}-{val/Accuracy:.4f}"
+      filename: "faceB5-{epoch}-{val/Accuracy:.4f}"
       monitor: "val/Accuracy"
       verbose: True
       save_top_k: 3
