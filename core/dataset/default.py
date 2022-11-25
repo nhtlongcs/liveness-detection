@@ -15,7 +15,13 @@ class ImageFolderFromCSV(Dataset):
                  IMG_DIR,
                  num_rows=-1,
                  transform=None,
+                 return_lbl=True,
                  **kwargs):
+        self.classnames = [
+            "fake",
+            "real",
+        ]
+        self.return_lbl = return_lbl
         self.csv_path = Path(CSV_PATH)
         self.img_dir = Path(IMG_DIR)
         assert self.csv_path.exists(
@@ -43,21 +49,36 @@ class ImageFolderFromCSV(Dataset):
                 image=img)['image']  # only works with albumentations
 
         assert label in [0, 1], f"Label {label} is not 0 or 1"
-        return {
-            'filename': filename,
-            'video_id': video_id,
-            'frame_id': frame_id,
-            'image': img,
-            'label': torch.tensor(label).long(),
-        }
+        if self.return_lbl:
+            return {
+                'filename': filename,
+                'video_id': video_id,
+                'frame_id': frame_id,
+                'image': img,
+                'label': torch.tensor(label).long(),
+            }
+        else:
+            return {
+                'filename': filename,
+                'video_id': video_id,
+                'frame_id': frame_id,
+                'image': img,
+            }
 
     def collate_fn(self, batch):
-        batch_dict = {
-            "images": torch.stack([x['image'] for x in batch]),
-            "labels": torch.stack([x['label'] for x in batch]),
-            "filenames": [x['filename'] for x in batch],
-            "video_ids": [x['video_id'] for x in batch],
-            "frame_ids": [x['frame_id'] for x in batch],
-        }
-
+        if self.return_lbl:
+            batch_dict = {
+                "images": torch.stack([x['image'] for x in batch]),
+                "labels": torch.stack([x['label'] for x in batch]),
+                "filenames": [x['filename'] for x in batch],
+                "video_ids": [x['video_id'] for x in batch],
+                "frame_ids": [x['frame_id'] for x in batch],
+            }
+        else:
+            batch_dict = {
+                "images": torch.stack([x['image'] for x in batch]),
+                "filenames": [x['filename'] for x in batch],
+                "video_ids": [x['video_id'] for x in batch],
+                "frame_ids": [x['frame_id'] for x in batch],
+            }
         return batch_dict
