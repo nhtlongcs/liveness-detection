@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm.auto import tqdm
 
 from core.dataset.default import ImageFolderFromCSV
-from core.models.abstract import ClsBase
+from core.models.base import SuperviseModel
 from core.dataset import DATASET_REGISTRY
 from core.models import MODEL_REGISTRY
 from core_pkg.models import MODEL_REGISTRY
@@ -37,7 +37,7 @@ class ClsPredictor:
 
     def __init__(
         self,
-        model: ClsBase,
+        model: SuperviseModel,
         cfg: Opts,
         batch_size: int = 1,
     ):
