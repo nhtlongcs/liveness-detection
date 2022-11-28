@@ -23,8 +23,8 @@ channels:
   - conda-forge
 
 dependencies:
-  - cudatoolkit=10.2
-  - pytorch=1.10
+  - cudatoolkit=11.6
+  - pytorch=1.12.0
   - pytorch-lightning=1.6.0
   - torchvision
   - albumentations

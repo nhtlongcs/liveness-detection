@@ -1,5 +1,7 @@
 # Liveness detection
 
+A strong baseline for liveness detection. The challenge is a part of the [ZaloAI Challenge Series](https://challenge.zalo.ai/), a series of challenges organized by ZaloAI to promote AI research in Vietnam.
+
 ## Table of Contents
 <!-- table of content of this file -->
 - [Table of Contents](#table-of-contents)
@@ -57,7 +59,7 @@ Raw data is available at
 
 - **Public test 2**: [https://dl-challenge.zalo.ai/liveness-detection/public_test_2.zip](https://dl-challenge.zalo.ai/liveness-detection/public_test_2.zip)
 
-The downloaded data should be extracted to the `data` folder
+The downloaded data should be extracted to the `data` folder. To see the sample data structure, please refer to the [data_sample](data_sample) folder.
 
 ```text
 |-- this-repo
@@ -141,13 +143,22 @@ For deployment/training purpose, docker is an ready-to-use solution.
 To build docker image:
 ```bash
 $ cd <this-repo>
-$ DOCKER_BUILDKIT=1 docker build -t liveness:latest .
+$ DOCKER_BUILDKIT=1 docker build -t infection:latest .
 ```
-To start docker container:
+To start docker container in interactive mode:
 ```bash
 # With device is the GPU device number, and shm-size is the shared memory size 
 # should be larger than the size of the model
-$ docker run --rm --name liveness --gpus device=0 --shm-size 16G -it -v $(pwd)/:/home/workspace/src/ liveness:latest /bin/bash
+$ docker run --rm --name infection --gpus device=0,1 --shm-size 16G -it -v $(pwd)/:/home/workspace/src/ infection:latest /bin/bash
+```
+To use docker container to run predict script with input data folder:
+```bash
+# sudo docker run –v [path to test data]:/data –v [current dir]:/result [docker name]
+$ docker run --gpus device=0,1 -v /home/username/data:/data -v /home/username/result/:/result/ infection /bin/bash predict.sh
+```
+To use docker container with jupyter notebook: (not working yet)
+```bash
+$ docker run --gpus device=0,1 -p 9777:9777 -v /home/username/data:/data -v /home/username/result/:/result/ infection /bin/bash jupyter.sh
 ```
 Other useful docker commands:
 ```bash
