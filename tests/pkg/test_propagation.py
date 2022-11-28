@@ -46,7 +46,8 @@ def test_evaluate(model_name='DualClassifier'):
         num_workers=0,
     )
     model = MODEL_REGISTRY.get(model_name)(cfg)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    opt1 = torch.optim.Adam(model.branch1.parameters(), lr=0.001)
+    opt2 = torch.optim.Adam(model.branch2.parameters(), lr=0.001)
     model.train()
     torch.set_grad_enabled(True)
 
@@ -54,19 +55,21 @@ def test_evaluate(model_name='DualClassifier'):
     pbar = tqdm(enumerate(dataloader))
     # model.current_epoch = 0
     for batch_idx, batch in pbar:
-        output = model.training_step(batch, batch_idx)
+        output = model.training_step(batch, batch_idx, 1)
         loss = output['loss']
         outs.append(loss.detach())
 
         # clear gradients
-        optimizer.zero_grad()
+        opt1.zero_grad()
+        opt2.zero_grad()
 
-        # backward
+        # backward``
         loss.backward()
 
         # update parameters
-        optimizer.step()
-        pbar.set_description(f"loss: {loss.item():.4f}")
+        opt1.step()
+        opt2.step()
+        pbar.set_description(f"loss: {loss.item():.10f}")
 
 
 if __name__ == "__main__":

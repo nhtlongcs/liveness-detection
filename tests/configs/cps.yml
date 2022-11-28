@@ -17,7 +17,7 @@ data:
       CSV_PATH: data_sample/train/labels_keyframes_train.csv
       IMG_DIR: data_sample/train/keyframes/
       loader:
-        batch_sizes: [2, 2] # using 2 sampler, batchsize = sum(batch_sizes)
+        batch_sizes: [6, 2] # using 2 sampler, batchsize = sum(batch_sizes)
         num_workers: 2
     val:
       CSV_PATH: data_sample/train/labels_keyframes_test.csv
