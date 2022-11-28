@@ -15,6 +15,7 @@ data:
   args:
     SIZE: 380
     train:
+      skip_frames: 1
       CSV_PATH: data/train/labels_keyframes_train.csv
       IMG_DIR: data/train/keyframes/
       loader:

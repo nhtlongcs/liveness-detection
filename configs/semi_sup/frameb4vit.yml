@@ -1,9 +1,9 @@
 global:
   username: nhtlong
   project_name: "zaloai2022"
-  name: "frameB7-model-SEED1480-SmallAug"
+  name: "frameDualB4VIT-model"
   save_dir: ./runs
-  use_fp16: true
+  use_fp16: false
   debug: false
   verbose: true
   SEED: 1480
@@ -13,17 +13,16 @@ global:
 data:
   name: ImageFolderFromCSV
   args:
-    SIZE: 380
+    SIZE: 384
     train:
-      skip_frames: 3
+      skip_frames: 4
       CSV_PATH: data/train/labels_keyframes_train.csv
       IMG_DIR: data/train/keyframes/
       loader:
-        batch_size: 16
+        batch_sizes: [12, 4] # using 2 sampler, batchsize = sum(batch_sizes) 32
         num_workers: 8
-        shuffle: True
-        drop_last: True
     val:
+      skip_frames: 2 
       CSV_PATH: data/train/labels_keyframes_test.csv
       IMG_DIR: data/train/keyframes/
       loader:
@@ -31,18 +30,33 @@ data:
         num_workers: 8
         shuffle: False
         drop_last: False
-extractors:
-  img_encoder:
-    name: EfficientNetExtractor
-    args:
-      version: 7
-      from_pretrained: True
-      freeze: False
 model:
-  name: FrameClassifier
+  name: DualClassifier
   args:
-    NUM_CLASS: 2 
-    EMBED_DIM: 1024
+      NUM_CLASS: 2 
+      consistency: 0.1
+      consistency_rampup: 5
+  branch1:
+    args:
+      EMBED_DIM: 1024
+  branch2:
+    args:
+      EMBED_DIM: 1024
+extractors:
+  branch1:
+    img_encoder:
+      name: EfficientNetExtractor
+      args:
+        version: 4
+        from_pretrained: True
+        freeze: False
+  branch2:
+    img_encoder:
+      name: VitNetExtractor
+      args:
+        version: vit_tiny_patch16_384
+        from_pretrained: True
+        freeze: False
 metric:
   - name: Accuracy
     args:
@@ -54,11 +68,12 @@ trainer:
   print_interval: 5
   save_interval: 1000
   accumulate_grad_batches: 4
-  lr: 0.001
+  lr1: 0.001
+  lr2: 0.00015
 callbacks:
   - name: ModelCheckpoint
     args:
-      filename: "FrameClfB7-{epoch}-{val/Accuracy:.4f}"
+      filename: "FrameDualB4VIT-{epoch}-{val/Accuracy:.4f}"
       monitor: "val/Accuracy"
       verbose: True
       save_top_k: 3
