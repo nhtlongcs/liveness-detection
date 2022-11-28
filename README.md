@@ -194,7 +194,7 @@ python -m pytest tests/
 Expected result:
 
 ```bash
-============================== test session starts ===============================
+============================== test session starts ==============================
 platform linux -- Python 3.9.13, pytest-7.2.0, pluggy-1.0.0
 rootdir: /home/nhtlong/playground/zalo-ai/liveness-detection
 plugins: anyio-3.6.1, order-1.0.1
@@ -218,5 +218,22 @@ To run code-format
 ```bash
 pip install pre-commit
 pre-commit install
-pre-commit run -a
 ```
+And every time you commit, the code will be formatted automatically. Or you can run `pre-commit run -a` to format all files.
+
+Expected result:
+```bash
+$ git add scripts/ cli/
+$ git commit -m "rename"         
+
+[WARNING] Unstaged files detected.                                                               
+[INFO] Stashing unstaged files to /home/nhtlong/.cache/pre-commit/...
+yapf........................................................................Passed
+[INFO] Restored changes from /home/nhtlong/.cache/pre-commit/...
+[main f552910] rename                                                                            
+ 4 files changed, 4 insertions(+), 8 deletions(-)                                                
+ rename {scripts => cli}/make_soup.py (100%)                                                     
+ rename {scripts => cli}/predict.py (91%)                                                        
+ rename {scripts => cli}/train.py (97%)                                                          
+ rename {scripts => cli}/validate.py (100%)                                  
+ ```
