@@ -61,8 +61,8 @@ In the future, we will add more features, such as:
 - [ ] More learning strategies, such as [Decoupled Knowledge Distillation](https://github.com/megvii-research/mdistiller)
 - [ ] Hyperparameter optimization with [Optuna](https://optuna.org/).
 
-If you have any suggestions, please feel free to open an issue or pull request.
-
+If you have any suggestions, please feel free to open an issue or pull request. If you want to contribute to this project, please read the [contribution guide](#contribution-guide). This project is a part of my [research template](github.com/nhtlongcs/not-available-yet), which is a collection of research projects and tools. The template is designed to help researchers to build their own research projects easily and quickly and achieve the best performance with the least effort.
+The template is still in the early stage of development, so i really appreciate any feedback and contribution.
 ## Environment
 
 For necessary packages, please refer to environment.yml. You can create a conda environment with the following command:
