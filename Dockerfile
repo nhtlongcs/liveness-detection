@@ -1,17 +1,20 @@
-FROM nvidia/cuda:10.2-base-ubuntu18.04
+FROM nvidia/cuda:11.6.1-base-ubuntu20.04
 
 # Package version control
 
 ARG PYTHON_VERSION=3.8
-ARG CUDA_VERSION=10.2
-ARG PYTORCH_VERSION=1.10
+ARG CUDA_VERSION=11.6
+ARG PYTORCH_VERSION=1.12.0
 ARG CUDA_CHANNEL=nvidia
 ARG INSTALL_CHANNEL=pytorch
 
 # Setup workdir and non-root user
 
-ARG USERNAME=hcmus
+ARG USERNAME=dcu
 WORKDIR /home/$USERNAME/workspace/
+
+ENV TZ=Asia/Ho_Chi_Minh \
+    DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update &&\
     apt-get install -y --no-install-recommends curl git sudo &&\
