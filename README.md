@@ -1,6 +1,6 @@
 # Liveness detection
 
-A strong baseline for liveness detection. The challenge is a part of the [ZaloAI Challenge Series](https://challenge.zalo.ai/), a series of challenges organized by ZaloAI to promote AI research in Vietnam.
+A strong baseline for liveness detection. The challenge is a part of the [ZaloAI Challenge Series](https://challenge.zalo.ai/), a series of challenges organized by ZaloAI to promote AI research in Vietnam. The source code could be used for similar tasks, such as face anti-spoofing or detecting fake videos.
 
 ## Table of Contents
 <!-- table of content of this file -->
@@ -31,6 +31,38 @@ Example Output: Predict.csv
 | ,,,          | ...            |
 | ,,,          | ...            |
 | ,,,          | ...            |
+
+
+## Features
+
+Currently, the following features are supported:
+
+- [x] Training and evaluation code for liveness detection, frame-level classification / face-level classification.
+- [x] Support for training on multiple GPUs.
+- [x] Automatic mixed precision training.
+- [x] Auto find best learning rate.
+- [x] Support EfficientNet, ViT, etc.
+- [x] Manage experiments with [Weights & Biases](https://wandb.ai/site).
+- [x] Code management with registry, config, and logging.
+- [x] Dockerfile for deployment.
+- [x] Unit tests.
+- [x] Packaging available.
+- [x] Support semi-supervised learning on external unlabeled data.
+
+In the future, we will add more features, such as:
+
+- [ ] Command-line interface.
+- [ ] New config system with [Hydra](https://hydra.cc/).
+- [ ] New package management system with [Poetry](https://python-poetry.org/).
+- [ ] Cloud training with [DVC](https://dvc.org/) and [AWS](https://aws.amazon.com/).
+- [ ] Testing with [CML](https://cml.dev/).
+- [ ] Support ensemble models, such as [Stacking](https://scikit-learn.org/stable/modules/ensemble.html#stacking), [Blending](https://scikit-learn.org/stable/modules/ensemble.html#blending) or [Model Soup](https://github.com/mlfoundations/model-soups).
+- [ ] Support fine-tuning as a module.
+- [ ] More learning strategies, such as [Decoupled Knowledge Distillation](https://github.com/megvii-research/mdistiller)
+- [ ] Hyperparameter optimization with [Optuna](https://optuna.org/).
+
+If you have any suggestions, please feel free to open an issue or pull request.
+
 ## Environment
 
 For necessary packages, please refer to environment.yml. You can create a conda environment with the following command:
@@ -237,3 +269,7 @@ yapf........................................................................Pass
  rename {scripts => cli}/train.py (97%)                                                          
  rename {scripts => cli}/validate.py (100%)                                  
  ```
+
+ ## Acknowledgement
+
+ The base solution is inspired by [this discussion](https://www.kaggle.com/competitions/deepfake-detection-challenge/discussion/145721).
