@@ -56,7 +56,7 @@ def train(config):
         callbacks=callbacks,
         num_sanity_val_steps=20,
         deterministic=True,
-        replace_sampler_ddp=False, # This is important for two stream
+        replace_sampler_ddp=False,  # This is important for two stream
         accumulate_grad_batches=config.trainer["accumulate_grad_batches"],
 
         # num_sanity_val_steps=-1,  # Sanity full validation required for visualization callbacks

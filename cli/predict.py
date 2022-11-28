@@ -11,7 +11,7 @@ from core.models.base import SuperviseModel
 from core.dataset import DATASET_REGISTRY
 from core.models import MODEL_REGISTRY
 from core_pkg.models import MODEL_REGISTRY
-
+from core.augmentations import TRANSFORM_REGISTRY
 import torchvision
 import pytorch_lightning as pl
 from core.opt import Opts
@@ -49,12 +49,8 @@ class ClsPredictor:
 
     def setup(self):
         image_size = self.cfg['data']['SIZE']
-        transform = torchvision.transforms.Compose([
-            torchvision.transforms.Resize((image_size, image_size)),
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                             std=[0.229, 0.224, 0.225]),
-        ])
+        transform = TRANSFORM_REGISTRY.get('test_classify_tf')(
+            img_size=image_size)
         self.ds = ImageFolderFromCSV(**self.cfg.data,
                                      transform=transform,
                                      num_rows=-1)
