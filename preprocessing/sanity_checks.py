@@ -2,6 +2,7 @@ from tqdm import tqdm
 import pandas as pd
 from pathlib import Path
 import logging
+import sys
 
 
 def check_video_ids(video_label_ls, bbox_label_ls, keyframe_label_ls):
@@ -137,4 +138,5 @@ def check_all(data_dir: str):
 
 
 if __name__ == '__main__':
-    check_all('data/train')
+
+    check_all(sys.argv[1])
